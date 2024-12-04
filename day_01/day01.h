@@ -10,6 +10,6 @@ typedef struct {
     int part_2;
 } Day01Answer;
 
-void SetDay01Answer(Day01Answer *answer);
+void setDay01Answer(Day01Answer *answer);
 
 #endif //DAY01_H

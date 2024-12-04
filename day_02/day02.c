@@ -7,11 +7,10 @@
 
 #include "day02.h"
 
-#define TRUE 't'
-#define FALSE 'f'
 #define REPORTS_COUNT 1000
 #define MAX_LEVELS 10
 #define INITIAL_MULTIPLIER 1;
+#define INCREASING(i) ((i > 0) - (i < 0))
 
 static void readFile(int **reports) {
     FILE *file = fopen("../day_02/day02.txt", "r");
@@ -61,22 +60,16 @@ static void readFile(int **reports) {
     fclose(file);
 }
 
-void SetDay02Answer(int *answerPtr) {
-    int **reports = malloc(REPORTS_COUNT * sizeof(int *));
-    for (int i = 0; i < REPORTS_COUNT; i++) {
-        reports[i] = calloc(MAX_LEVELS, sizeof(int));
-    }
-    readFile(reports);
-
-    int *safe = answerPtr;
+static int getPart1Answer(const int **reports) {
+    int safe = 0;
     for (int i = 0; i < REPORTS_COUNT; i++) {
         const int *report = reports[i];
         if (report[0] == 0) {
             break;
         }
 
-        char is_safe = TRUE;
         int increasing = 0;
+        int safe_tmp = 1;
 
         const int START_INDEX = 1;
         for (int j = START_INDEX; j < MAX_LEVELS; j++) {
@@ -89,21 +82,30 @@ void SetDay02Answer(int *answerPtr) {
             const int previous = reports[i][j - 1];
             const int difference = current - previous;
 
-            const int increasing_tmp = (difference > 0) - (difference < 0);
+            const int increasing_tmp = INCREASING(difference);
             if (j == START_INDEX) {
                 increasing = increasing_tmp;
             }
 
             if (increasing == 0 || increasing_tmp != increasing || abs(difference) > 3) {
-                is_safe = FALSE;
+                safe_tmp = 0;
                 break;
             }
         }
-
-        if (is_safe == TRUE) {
-            (*safe)++;
-        }
+        safe += safe_tmp;
     }
+    return safe;
+}
+
+void setDay02Answer(Day02Answer *answer) {
+    int **reports = malloc(REPORTS_COUNT * sizeof(int *));
+    for (int i = 0; i < REPORTS_COUNT; i++) {
+        reports[i] = calloc(MAX_LEVELS, sizeof(int));
+    }
+    readFile(reports);
+
+    answer->part_1 = getPart1Answer(reports);
+    answer->part_2 = 0;
 
     for (int i = 0; i < REPORTS_COUNT; i++) {
         free(reports[i]);

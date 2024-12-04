@@ -29,7 +29,7 @@ static void readFile(int *leftArray, int *rightArray) {
     qsort(rightArray, ARRAY_SIZE, sizeof(int), compare);
 }
 
-static int GetPart1Answer(const int *leftArray, const int *rightArray) {
+static int getPart1Answer(const int *leftArray, const int *rightArray) {
     int result = 0;
     for (int i = 0; i < ARRAY_SIZE; i++) {
         result += abs(leftArray[i] - rightArray[i]);
@@ -38,7 +38,7 @@ static int GetPart1Answer(const int *leftArray, const int *rightArray) {
     return result;
 }
 
-static int GetPart2Answer(const int *leftArray, const int *rightArray) {
+static int getPart2Answer(const int *leftArray, const int *rightArray) {
     int similarityScore = 0;
 
     for (int i = 0; i < ARRAY_SIZE; i++) {
@@ -60,7 +60,7 @@ static int GetPart2Answer(const int *leftArray, const int *rightArray) {
     return similarityScore;
 }
 
-void SetDay01Answer(Day01Answer *answer) {
+void setDay01Answer(Day01Answer *answer) {
     const ulong MEM_SIZE = ARRAY_SIZE * sizeof(int);
 
     int *left_array_1 = malloc(MEM_SIZE);
@@ -73,8 +73,8 @@ void SetDay01Answer(Day01Answer *answer) {
     memcpy(left_array_2, left_array_1, MEM_SIZE);
     memcpy(right_array_2, right_array_1, MEM_SIZE);
 
-    answer->part_1 = GetPart1Answer(left_array_1, right_array_1);
-    answer->part_2 = GetPart2Answer(left_array_2, right_array_2);
+    answer->part_1 = getPart1Answer(left_array_1, right_array_1);
+    answer->part_2 = getPart2Answer(left_array_2, right_array_2);
 
     free(left_array_1);
     free(right_array_1);
