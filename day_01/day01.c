@@ -21,22 +21,40 @@ void readFile(int *leftArray, int *rightArray, const int ARRAY_SIZE) {
     }
 
     fclose(file);
+
+    qsort(leftArray, ARRAY_SIZE, sizeof(int), compare);
+    qsort(rightArray, ARRAY_SIZE, sizeof(int), compare);
 }
 
-int GetPart1Answer(int *leftArray, int *rightArray, const int FILE_SIZE) {
-    qsort(leftArray, FILE_SIZE, sizeof(int), compare);
-    qsort(rightArray, FILE_SIZE, sizeof(int), compare);
-
+int GetPart1Answer(const int *leftArray, const int *rightArray, const int ARRAY_SIZE) {
     int result = 0;
-    for (int i = 0; i < FILE_SIZE; i++) {
+    for (int i = 0; i < ARRAY_SIZE; i++) {
         result += abs(leftArray[i] - rightArray[i]);
     }
 
     return result;
 }
 
-int GetPart2Answer(int *leftArray, int *rightArray, const int FILE_SIZE) {
-    return 0; // TODO
+int GetPart2Answer(const int *leftArray, const int *rightArray, const int ARRAY_SIZE) {
+    int similarityScore = 0;
+
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        const int currentLeft = leftArray[i];
+
+        int similarityScore_tmp = 0;
+        for (int j = 0; j < ARRAY_SIZE; j++) {
+            const int currentRight = rightArray[j];
+            if (currentLeft == currentRight) {
+                similarityScore_tmp += currentLeft;
+            }
+            if (currentLeft < currentRight) {
+                j += ARRAY_SIZE;
+            }
+        }
+        similarityScore += similarityScore_tmp;
+    }
+
+    return similarityScore;
 }
 
 void SetDay01Answer(Day01Answer *answer) {
@@ -45,11 +63,11 @@ void SetDay01Answer(Day01Answer *answer) {
 
     int *left_array_1 = malloc(MEM_SIZE);
     int *right_array_1 = malloc(MEM_SIZE);
-    int *left_array_2 = malloc(MEM_SIZE);
-    int *right_array_2 = malloc(MEM_SIZE);
 
     readFile(left_array_1, right_array_1, FILE_SIZE);
 
+    int *left_array_2 = malloc(MEM_SIZE);
+    int *right_array_2 = malloc(MEM_SIZE);
     memcpy(left_array_2, left_array_1, MEM_SIZE);
     memcpy(right_array_2, right_array_1, MEM_SIZE);
 
