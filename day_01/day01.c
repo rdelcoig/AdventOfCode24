@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include "../utils.h"
 #include <stdio.h>
+#include <string.h>
 
-void readFile(int *leftArray, int *rightArray, int arraySize) {
+void readFile(int *leftArray, int *rightArray, const int ARRAY_SIZE) {
     FILE *file = fopen("../day_01/data.txt", "r");
 
     if (file == NULL) {
@@ -15,21 +16,14 @@ void readFile(int *leftArray, int *rightArray, int arraySize) {
 
     int i = 0;
 
-    while (fscanf(file, "%d   %d", &leftArray[i], &rightArray[i]) == 2 && i < arraySize) {
+    while (fscanf(file, "%d   %d", &leftArray[i], &rightArray[i]) == 2 && i < ARRAY_SIZE) {
         i++;
     }
 
     fclose(file);
 }
 
-inline int GetDay01Answer() {
-    const int FILE_SIZE = 1000;
-
-    int *leftArray = malloc(sizeof(int) * FILE_SIZE);
-    int *rightArray = malloc(sizeof(int) * FILE_SIZE);
-
-    readFile(leftArray, rightArray, FILE_SIZE);
-
+int GetPart1Answer(int *leftArray, int *rightArray, const int FILE_SIZE) {
     qsort(leftArray, FILE_SIZE, sizeof(int), compare);
     qsort(rightArray, FILE_SIZE, sizeof(int), compare);
 
@@ -38,8 +32,32 @@ inline int GetDay01Answer() {
         result += abs(leftArray[i] - rightArray[i]);
     }
 
-    free(leftArray);
-    free(rightArray);
-
     return result;
+}
+
+int GetPart2Answer(int *leftArray, int *rightArray, const int FILE_SIZE) {
+    return 0; // TODO
+}
+
+void SetDay01Answer(Day01Answer *answer) {
+    const int FILE_SIZE = 1000;
+    const ulong MEM_SIZE = FILE_SIZE * sizeof(int);
+
+    int *left_array_1 = malloc(MEM_SIZE);
+    int *right_array_1 = malloc(MEM_SIZE);
+    int *left_array_2 = malloc(MEM_SIZE);
+    int *right_array_2 = malloc(MEM_SIZE);
+
+    readFile(left_array_1, right_array_1, FILE_SIZE);
+
+    memcpy(left_array_2, left_array_1, MEM_SIZE);
+    memcpy(right_array_2, right_array_1, MEM_SIZE);
+
+    answer->part_1 = GetPart1Answer(left_array_1, right_array_1, FILE_SIZE);
+    answer->part_2 = GetPart2Answer(left_array_2, right_array_2, FILE_SIZE);
+
+    free(left_array_1);
+    free(right_array_1);
+    free(left_array_2);
+    free(right_array_2);
 }

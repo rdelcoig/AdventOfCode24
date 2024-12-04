@@ -5,6 +5,11 @@
 #ifndef DAY01_H
 #define DAY01_H
 
-int GetDay01Answer();
+typedef struct {
+    int part_1;
+    int part_2;
+} Day01Answer;
+
+void SetDay01Answer(Day01Answer *answer);
 
 #endif //DAY01_H

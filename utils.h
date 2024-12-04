@@ -5,17 +5,16 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-int min(int left, int right) {
-    return left < right ? left : right;
+inline int min(const int LEFT, const int RIGHT) {
+    return LEFT < RIGHT ? LEFT : RIGHT;
 }
 
-int compare(const void* left, const void* right)
-{
-    const int int_left = * (int*) left;
-    const int int_right = * (int*) right;
+int compare(const void *LEFT, const void *RIGHT) {
+    const int INT_LEFT = *(int *) LEFT;
+    const int INT_RIGHT = *(int *) RIGHT;
 
-    if ( int_left > int_right ) return 1;
-    if ( int_left < int_right ) return -1;
+    if (INT_LEFT > INT_RIGHT) return 1;
+    if (INT_LEFT < INT_RIGHT) return -1;
     return 0;
 }
 
