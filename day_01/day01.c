@@ -10,12 +10,18 @@
 
 #define ARRAY_SIZE 1000
 
+/**
+ * Compare function for quick sort
+ */
 static int compare(const void *left, const void *right) {
     const int int_left = *(int *) left;
     const int int_right = *(int *) right;
     return COMPARE(int_left, int_right);
 }
 
+/**
+ * Read day 01 file and store left and right columns in corresponding arrays
+ */
 static void read_file_day01(int *left_array, int *right_array) {
     FILE *file = fopen("../day_01/day01.txt", "r");
 

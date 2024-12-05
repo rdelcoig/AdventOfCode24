@@ -15,9 +15,7 @@
 #define INCREASING(i) ((i > 0) - (i < 0))
 
 /**
- * Reads all data from the "day02.txt" file and populates the provided 2D array 'reports' with extracted values.
- *
- * @param reports A pointer to a 2D array where each row represents a report.
+ * Read file & store to jagged array
  */
 static void read_file_day02(int **reports) {
     FILE *file = fopen("../day_02/day02.txt", "r");
@@ -68,11 +66,7 @@ static void read_file_day02(int **reports) {
 }
 
 /**
- * Removes a level from a report by shifting all subsequent elements
- * one position to the left, starting from the specified index.
- *
- * @param report A pointer to an array representing a report.
- * @param index The index of the level to be removed from the report.
+ * Remove level specified by index and move left next levels
  */
 static void remove_level(int *report, const int index) {
     for (int i = index; i < MAX_LEVELS - 1; i++) {
@@ -81,14 +75,8 @@ static void remove_level(int *report, const int index) {
 }
 
 /**
- * Calculates the direction of movement between two integer values.
- * Determines if the movement from 'left' to 'right' is increasing, decreasing, or stationary.
- * It only considers valid directions when the absolute difference between the values
- *     is greater than 0 and less than or equal to 3.
- *
- * @param left An integer representing the starting value.
- * @param right An integer representing the ending value.
- * @return An integer indicating the direction: 1 for increasing, -1 for decreasing, and 0 for no valid movement.
+ * Get valid direction
+ * Return 0 when not valid
  */
 static int get_direction(const int left, const int right) {
     const int difference = right - left;
@@ -101,14 +89,10 @@ static int get_direction(const int left, const int right) {
 }
 
 /**
- * Get first bad level index
- * If there are no bad level, returns -1
- *
- * @param report A pointer to an array representing a report.
- * @param skip_index Level index in report to skip. When -1, no level to skip
+ * Get first bad level index or -1
  */
 static int get_bad_index(const int *report, const int skip_index) {
-    int increasing = INT_MIN;
+    int direction = INT_MIN;
 
     int report_tmp[10] = {};
     memcpy(report_tmp, report, sizeof(int) * 10);
@@ -127,14 +111,14 @@ static int get_bad_index(const int *report, const int skip_index) {
             break;
         }
 
-        const int direction = get_direction(current, next);
+        const int direction_tmp = get_direction(current, next);
 
-        if (increasing == INT_MIN) {
-            increasing = direction;
+        if (direction == INT_MIN) {
+            direction = direction_tmp;
         }
 
         // if ok, check next combination
-        if (direction && direction == increasing) {
+        if (direction_tmp && direction_tmp == direction) {
             i++;
         } else {
             return i;
@@ -145,14 +129,6 @@ static int get_bad_index(const int *report, const int skip_index) {
     return -1;
 }
 
-/**
- * Determines the bad index after considering a tolerance range, which allows for retrying
- * by potentially removing the current or adjacent levels from the report.
- *
- * @param report A pointer to an array representing a report.
- * @param bad_index The current index suspected to be problematic.
- * @return The corrected bad index considering tolerance, or the original bad index if no correction can be made.
- */
 int get_bad_index_with_tolerance(const int *report, const int bad_index) {
     // re-try by removing previous or current or next level
     for (int j = -1; j <= 1; j++) {
@@ -168,14 +144,6 @@ int get_bad_index_with_tolerance(const int *report, const int bad_index) {
     return bad_index;
 }
 
-/**
- * Determines if the given report is safe to use by evaluating if any inconsistent levels
- * are present, with an option to apply tolerance adjustments.
- *
- * @param report A pointer to an array representing a report.
- * @param with_tolerance An integer flag indicating whether to apply tolerance to the safety check (non-zero value to apply).
- * @return An integer value: 1 if the report is considered safe, 0 if not safe.
- */
 int is_safe(const int *report, const int with_tolerance) {
     const int bad_index = get_bad_index(report, -1);
 
