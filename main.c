@@ -5,39 +5,39 @@
 #include "day_01/day01.h"
 #include "day_02/day02.h"
 
-void printDay01Answer() {
-    Day01Answer *day01Answer = malloc(sizeof(Day01Answer));
-    set_day01_answer(day01Answer);
+void print_day01_answer() {
+    Answer2Parts *day01_answer = malloc(sizeof(Answer2Parts));
+    set_day01_answer(day01_answer);
 
     printf("\nDay 01 results\n--------------\n");
-    printf("Part 1 : %d\n", day01Answer->part_1);
-    printf("Part 2 : %d\n", day01Answer->part_2);
+    printf("Part 1 : %d\n", day01_answer->part_1);
+    printf("Part 2 : %d\n", day01_answer->part_2);
 
-    if (day01Answer->part_1 != 1879048 || day01Answer->part_2 != 21024792) {
+    if (day01_answer->part_1 != 1879048 || day01_answer->part_2 != 21024792) {
         printf("01 : TEST KO ! \n");
     }
 
-    free(day01Answer);
+    free(day01_answer);
 }
 
-void printDay02Answer() {
-    Day02Answer *day02Answer = malloc(sizeof(Day02Answer));
-    set_day02_answer(day02Answer);
+void print_day02_answer() {
+    Answer2Parts *day02_answer = malloc(sizeof(Answer2Parts));
+    set_day02_answer(day02_answer);
 
     printf("\nDay 02 results\n--------------\n");
-    printf("Part 1 : %d\n", day02Answer->part_1);
-    printf("Part 2 : %d\n", day02Answer->part_2);
+    printf("Part 1 : %d\n", day02_answer->part_1);
+    printf("Part 2 : %d\n", day02_answer->part_2);
 
-    if (day02Answer->part_1 != 631 || day02Answer->part_2 != 665) {
+    if (day02_answer->part_1 != 631 || day02_answer->part_2 != 665) {
         printf("02 : TEST KO ! \n");
     }
 
-    free(day02Answer);
+    free(day02_answer);
 }
 
 int main(void) {
-    printDay01Answer();
-    printDay02Answer();
+    print_day01_answer();
+    print_day02_answer();
 
     return 0;
 }

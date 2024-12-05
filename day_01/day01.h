@@ -5,11 +5,8 @@
 #ifndef DAY01_H
 #define DAY01_H
 
-typedef struct {
-    int part_1;
-    int part_2;
-} Day01Answer;
+#include "../utils.h"
 
-void set_day01_answer(Day01Answer *answer);
+void set_day01_answer(Answer2Parts *answer);
 
 #endif //DAY01_H

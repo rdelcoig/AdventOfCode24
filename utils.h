@@ -5,17 +5,15 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-inline int min(const int LEFT, const int RIGHT) {
-    return LEFT < RIGHT ? LEFT : RIGHT;
-}
+#define COMPARE(l,r) ((l < r) ? -1 : (l > r))
 
-int compare(const void *LEFT, const void *RIGHT) {
-    const int INT_LEFT = *(int *) LEFT;
-    const int INT_RIGHT = *(int *) RIGHT;
+typedef struct {
+    int part_1;
+    int part_2;
+} Answer2Parts;
 
-    if (INT_LEFT > INT_RIGHT) return 1;
-    if (INT_LEFT < INT_RIGHT) return -1;
-    return 0;
+inline int min(const int left, const int right) {
+    return left < right ? left : right;
 }
 
 #endif //UTILS_H

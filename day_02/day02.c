@@ -208,7 +208,7 @@ static int get_day02_part2_answer(const int **reports) {
     return count_safe_reports(reports, 1);
 }
 
-void set_day02_answer(Day02Answer *answer) {
+void set_day02_answer(Answer2Parts *answer) {
     int **reports = malloc(REPORTS_COUNT * sizeof(int *));
     for (int i = 0; i < REPORTS_COUNT; i++) {
         reports[i] = calloc(MAX_LEVELS, sizeof(int));
