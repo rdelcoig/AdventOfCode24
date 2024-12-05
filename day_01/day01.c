@@ -10,7 +10,7 @@
 
 #define ARRAY_SIZE 1000
 
-static void readFile(int *leftArray, int *rightArray) {
+static void read_file_day01(int *left_array, int *right_array) {
     FILE *file = fopen("../day_01/day01.txt", "r");
 
     if (file == NULL) {
@@ -19,17 +19,17 @@ static void readFile(int *leftArray, int *rightArray) {
 
     int i = 0;
 
-    while (fscanf(file, "%d   %d", &leftArray[i], &rightArray[i]) == 2 && i < ARRAY_SIZE) {
+    while (fscanf(file, "%d   %d", &left_array[i], &right_array[i]) == 2 && i < ARRAY_SIZE) {
         i++;
     }
 
     fclose(file);
 
-    qsort(leftArray, ARRAY_SIZE, sizeof(int), compare);
-    qsort(rightArray, ARRAY_SIZE, sizeof(int), compare);
+    qsort(left_array, ARRAY_SIZE, sizeof(int), compare);
+    qsort(right_array, ARRAY_SIZE, sizeof(int), compare);
 }
 
-static int getPart1Answer(const int *leftArray, const int *rightArray) {
+static int get_day01_part1_answer(const int *leftArray, const int *rightArray) {
     int result = 0;
     for (int i = 0; i < ARRAY_SIZE; i++) {
         result += abs(leftArray[i] - rightArray[i]);
@@ -38,7 +38,7 @@ static int getPart1Answer(const int *leftArray, const int *rightArray) {
     return result;
 }
 
-static int getPart2Answer(const int *leftArray, const int *rightArray) {
+static int get_day02_part2_answer(const int *leftArray, const int *rightArray) {
     int similarityScore = 0;
 
     for (int i = 0; i < ARRAY_SIZE; i++) {
@@ -60,21 +60,21 @@ static int getPart2Answer(const int *leftArray, const int *rightArray) {
     return similarityScore;
 }
 
-void setDay01Answer(Day01Answer *answer) {
-    const ulong MEM_SIZE = ARRAY_SIZE * sizeof(int);
+void set_day01_answer(Day01Answer *answer) {
+    const ulong mem_size = ARRAY_SIZE * sizeof(int);
 
-    int *left_array_1 = malloc(MEM_SIZE);
-    int *right_array_1 = malloc(MEM_SIZE);
+    int *left_array_1 = malloc(mem_size);
+    int *right_array_1 = malloc(mem_size);
 
-    readFile(left_array_1, right_array_1);
+    read_file_day01(left_array_1, right_array_1);
 
-    int *left_array_2 = malloc(MEM_SIZE);
-    int *right_array_2 = malloc(MEM_SIZE);
-    memcpy(left_array_2, left_array_1, MEM_SIZE);
-    memcpy(right_array_2, right_array_1, MEM_SIZE);
+    int *left_array_2 = malloc(mem_size);
+    int *right_array_2 = malloc(mem_size);
+    memcpy(left_array_2, left_array_1, mem_size);
+    memcpy(right_array_2, right_array_1, mem_size);
 
-    answer->part_1 = getPart1Answer(left_array_1, right_array_1);
-    answer->part_2 = getPart2Answer(left_array_2, right_array_2);
+    answer->part_1 = get_day01_part1_answer(left_array_1, right_array_1);
+    answer->part_2 = get_day02_part2_answer(left_array_2, right_array_2);
 
     free(left_array_1);
     free(right_array_1);
