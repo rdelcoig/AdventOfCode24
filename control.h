@@ -7,8 +7,6 @@
 
 #include "utils.h"
 
-void print_answer(const Answer2Parts *answer, int day);
-
 void control_day_01(const Answer2Parts *answer);
 
 void control_day_02(const Answer2Parts *answer);

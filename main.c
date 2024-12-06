@@ -7,31 +7,23 @@
 #include "day_01/day01.h"
 #include "day_02/day02.h"
 
-void print_day01_answer() {
-    Answer2Parts *day01_answer = malloc(sizeof(Answer2Parts));
+void print_answer(void (*set_answer)(Answer2Parts *), void (*control_day)(const Answer2Parts *), const int day) {
+    Answer2Parts *answer = malloc(sizeof(Answer2Parts));
 
-    set_day01_answer(day01_answer);
+    set_answer(answer);
 
-    print_answer(day01_answer, 1);
-    control_day_01(day01_answer);
+    printf("\nDay %02d results\n--------------\n", day);
+    printf("Part 1 : %d\n", answer->part_1);
+    printf("Part 2 : %d\n", answer->part_2);
 
-    free(day01_answer);
-}
+    control_day(answer);
 
-void print_day02_answer() {
-    Answer2Parts *day02_answer = malloc(sizeof(Answer2Parts));
-
-    set_day02_answer(day02_answer);
-
-    print_answer(day02_answer, 2);
-    control_day_02(day02_answer);
-
-    free(day02_answer);
+    free(answer);
 }
 
 int main(void) {
-    print_day01_answer();
-    print_day02_answer();
+    print_answer(set_day01_answer, control_day_01, 1);
+    print_answer(set_day02_answer, control_day_02, 2);
 
     return 0;
 }

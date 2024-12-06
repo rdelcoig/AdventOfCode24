@@ -153,7 +153,7 @@ int is_safe(const int *report, const int with_tolerance) {
     return bad_index < 0;
 }
 
-static int count_safe_reports(const int **reports, const int with_tolerance) {
+static int count_safe_reports(int **reports, const int with_tolerance) {
     int safe = 0;
     for (int i = 0; i < REPORTS_COUNT; ++i) {
         const int *report = reports[i];
@@ -168,11 +168,11 @@ static int count_safe_reports(const int **reports, const int with_tolerance) {
     return safe;
 }
 
-static int get_day02_part1_answer(const int **reports) {
+static int get_day02_part1_answer(int **reports) {
     return count_safe_reports(reports, 0);
 }
 
-static int get_day02_part2_answer(const int **reports) {
+static int get_day02_part2_answer(int **reports) {
     return count_safe_reports(reports, 1);
 }
 
