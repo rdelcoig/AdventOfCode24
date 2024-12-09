@@ -20,3 +20,9 @@ void control_day_02(const Answer2Parts *answer) {
     const Answer2Parts control = {631, 665};
     control_2_parts(answer, &control, 2);
 }
+
+void control_day_03(const Answer2Parts *answer) {
+    const Answer2Parts control = {161, 48};
+    //const Answer2Parts control = {175615763, 0};
+    control_2_parts(answer, &control, 3);
+}

@@ -5,6 +5,8 @@
 #ifndef DAY03_H
 #define DAY03_H
 
-void set_day03_answer(int *answer);
+#include "../utils.h"
+
+void set_day03_answer(Answer2Parts *answer);
 
 #endif //DAY03_H
