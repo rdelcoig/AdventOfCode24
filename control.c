@@ -22,7 +22,7 @@ void control_day_02(const Answer2Parts *answer) {
 }
 
 void control_day_03(const Answer2Parts *answer) {
-    const Answer2Parts control = {161, 48};
-    //const Answer2Parts control = {175615763, 0};
+    //const Answer2Parts control = {161, 48};
+    const Answer2Parts control = {175615763, 74361272};
     control_2_parts(answer, &control, 3);
 }

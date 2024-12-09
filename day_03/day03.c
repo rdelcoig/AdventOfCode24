@@ -32,24 +32,24 @@ static int read_file_day03(char *raw_data, const int array_size) {
 }
 
 void set_day03_answer(Answer2Parts *answer) {
-    const int memory_data_size = 100;
-    char memory_data_array[memory_data_size];
-    memset(memory_data_array, 0, memory_data_size);
-
-    set_part1_test_data(memory_data_array, memory_data_size);
-    answer->part_1 = get_part1_answer(memory_data_array);
-
-    memset(memory_data_array, 0, memory_data_size);
-    set_part2_test_data(memory_data_array, memory_data_size);
-    answer->part_2 = get_part2_answer(memory_data_array);
-
-    // const int array_size = 20000;
-    // char *raw_data = calloc(array_size, sizeof(char));
+    // const int memory_data_size = 100;
+    // char memory_data_array[memory_data_size];
+    // memset(memory_data_array, 0, memory_data_size);
     //
-    // read_file_day03(raw_data, array_size);
+    // set_part1_test_data(memory_data_array, memory_data_size);
+    // answer->part_1 = get_part1_answer(memory_data_array);
     //
-    // answer->part_1 = get_part1_answer(raw_data);
-    // answer->part_2 = get_part2_answer(raw_data);
-    //
-    // free(raw_data);
+    // memset(memory_data_array, 0, memory_data_size);
+    // set_part2_test_data(memory_data_array, memory_data_size);
+    // answer->part_2 = get_part2_answer(memory_data_array);
+
+    const int array_size = 20000;
+    char *raw_data = calloc(array_size, sizeof(char));
+
+    read_file_day03(raw_data, array_size);
+
+    answer->part_1 = get_part1_answer(raw_data);
+    answer->part_2 = get_part2_answer(raw_data);
+
+    free(raw_data);
 }
