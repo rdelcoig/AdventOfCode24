@@ -10,7 +10,7 @@
 #define LAST_VALID_CHAR ')'
 
 typedef struct {
-    char value[MAX_INSTRUCTION_SIZE];
+    char value[MAX_INSTRUCTION_SIZE + 1];
     int left_operand;
     int right_operand;
     int end_index;
