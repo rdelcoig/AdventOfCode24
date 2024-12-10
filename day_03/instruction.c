@@ -32,7 +32,7 @@ static int is_valid_instruction(const char *instruction_to_parse,
     // fixme : use a non-capturing group for the 1st group of version 2
     const char *pattern = version == VERSION1
                               ? "mul\\(([0-9]{1,3}),([0-9]{1,3})\\)"
-                              : "do(n\'t)\?\\(\\)|mul\\(([0-9]{1,3}),([0-9]{1,3})\\)";
+                              : "mul\\(([0-9]{1,3}),([0-9]{1,3})\\)|do(n\'t)\?\\(\\)";
 
     regex_t regex;
     const int status = regcomp(&regex, pattern, REG_EXTENDED);
@@ -52,11 +52,11 @@ static int is_valid_instruction(const char *instruction_to_parse,
         parse_match->end_index = matches[full_match_position].rm_eo;
 
         // it will be filled with -1 when do/don't
-        const int left_operand_position = 0 + version;
+        const int left_operand_position = 1;
         parse_match->left_operand_start_index = matches[left_operand_position].rm_so;
         parse_match->left_operand_end_index = matches[left_operand_position].rm_eo;
 
-        const int right_operand_position = 1 + version;
+        const int right_operand_position = 2;
         parse_match->right_operand_start_index = matches[right_operand_position].rm_so;
         parse_match->right_operand_end_index = matches[right_operand_position].rm_eo;
     }
