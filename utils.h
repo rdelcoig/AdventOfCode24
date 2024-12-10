@@ -12,8 +12,16 @@ typedef struct {
     int part_2;
 } Answer2Parts;
 
-inline int min(const int left, const int right) {
-    return left < right ? left : right;
-}
+typedef struct {
+    int x;
+    int y;
+} Point;
+
+typedef struct {
+    int lines;
+    int columns;
+} TableSize;
+
+Point add_points(const Point *point1, const Point *point2);
 
 #endif //UTILS_H
