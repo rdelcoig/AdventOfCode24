@@ -4,8 +4,9 @@
 
 #include "day04.h"
 #include "day04_part1.h"
+#include "day04_part2.h"
 
 void set_day04_answer(Answer2Parts *answer) {
-    answer->part_1 = get_answer();
-    answer->part_2 = 0;
+    answer->part_1 = get_answer_part1_test(); // get_answer_part1();
+    answer->part_2 = get_answer_part2_test(); // get_answer_part2();
 }

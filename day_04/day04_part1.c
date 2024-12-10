@@ -2,7 +2,6 @@
 // Created by romain on 10/12/24.
 //
 
-#include <stdlib.h>
 #include <string.h>
 
 #include "day04_part1.h"
@@ -66,27 +65,12 @@ static int get_total(char **lines, const TableSize *size) {
     return total;
 }
 
-static int get_answer_internal(const char *file_path, const TableSize *size) {
-    char *lines[size->lines];
-    for (int i = 0; i < size->lines; i++) {
-        lines[i] = calloc(size->columns + 1, sizeof(char));
-    }
-
-    read_file_day04(file_path, size, lines);
-    const int total = get_total(lines, size);
-
-    for (int i = 0; i < size->lines; i++)
-        free(lines[i]);
-
-    return total;
-}
-
-int get_answer_test() {
+int get_answer_part1_test() {
     const TableSize size = {10, 10};
-    return get_answer_internal("../day_04/day04_test.txt", &size);
+    return read_file_day04_and_return_answer("../day_04/day04_test.txt", &size, get_total);
 }
 
-int get_answer() {
+int get_answer_part1() {
     const TableSize size = {140, 140};
-    return get_answer_internal("../day_04/day04.txt", &size);
+    return read_file_day04_and_return_answer("../day_04/day04.txt", &size, get_total);
 }
