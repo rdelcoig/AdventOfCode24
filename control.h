@@ -13,4 +13,6 @@ void control_day_02(const Answer2Parts *answer);
 
 void control_day_03(const Answer2Parts *answer);
 
+void control_day_04(const Answer2Parts *answer);
+
 #endif //CONTROL_H
