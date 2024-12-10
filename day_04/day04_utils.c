@@ -37,3 +37,15 @@ int read_file_day04_and_return_answer(const char *file_path, const TableSize *si
 
     return total;
 }
+
+inline int is_out_of_bounds(const Point *point, const TableSize *size) {
+    return point->x < 0 || point->x >= size->columns || point->y < 0 || point->y >= size->lines;
+}
+
+char get_value_at_point(char **lines, const TableSize *size, const Point *point) {
+    if (is_out_of_bounds(point, size)) {
+        perror("Out of bounds");
+        exit(1);
+    }
+    return lines[point->y][point->x];
+}
