@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "day04_part1.h"
-#include "file_day04.h"
+#include "day04_utils.h"
 #include "../utils.h"
 
 static int is_out_of_bounds(const Point *point, const TableSize *size) {

@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "file_day04.h"
+#include "day04_utils.h"
 
 void read_file_day04(const char *path, const TableSize *size, char **raw_data) {
     FILE *file = fopen(path, "r");

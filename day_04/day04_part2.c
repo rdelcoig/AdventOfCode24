@@ -3,7 +3,7 @@
 //
 
 #include "day04_part2.h"
-#include "file_day04.h"
+#include "day04_utils.h"
 #include "../utils.h"
 
 static int get_total(char **lines, const TableSize *size) {
