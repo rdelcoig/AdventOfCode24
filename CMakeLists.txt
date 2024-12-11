@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.25)
 project(AdventOfCode24 C)
 
 set(CMAKE_C_STANDARD 23)
@@ -16,4 +16,5 @@ add_executable(AdventOfCode24
         day_04/day04_utils.c
         day_04/day04_part1.c
         day_04/day04_part2.c
-        day_04/day04.c)
+        day_04/day04.c
+        day_05/day05.c)
