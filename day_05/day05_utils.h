@@ -13,9 +13,9 @@ typedef struct {
     int after;
 } PageRule;
 
-int compare_page_rules_before_after(const void *left, const void *right);
+// int compare_page_rules_before_after(const void *left, const void *right);
 
-int compare_page_rules_after_before(const void *left, const void *right);
+// int compare_page_rules_after_before(const void *left, const void *right);
 
 void read_file_day05(const char *path, PageRule *rules, int **updates);
 

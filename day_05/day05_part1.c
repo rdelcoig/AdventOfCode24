@@ -10,46 +10,46 @@
 #include "day05_utils.h"
 
 static void filter_rules_by_before(const int page, const PageRule *rules, const int rules_count,
-                                   const PageRule **filtered_rules, int *filtered_rules_count) {
-    *filtered_rules_count = 0;
+                                   int pages_after[]) {
+    int pages_after_count = 0;
     for (int i = 0; i < rules_count; i++) {
-        const int current = rules[i].before;
+        // ensure that allocated memory is clean
+        pages_after[i] = -1;
 
-        if (current > page) {
-            return;
-        }
+        const int current = rules[i].before;
 
         if (current == page) {
             // current rule matches => copy pointer to collection
-            const int filtered_rules_index = *filtered_rules_count;
-
-            filtered_rules[filtered_rules_index] = &rules[i];
-
-            (*filtered_rules_count)++;
+            pages_after[pages_after_count] = rules[i].after;
+            pages_after_count++;
         }
     }
 }
 
-static int is_update_correct(const int **updates, const PageRule *rules, const int rules_count, const int index) {
-    const int *line = updates[index];
-
-    if (line[0] == -1) {
-        return 0;
-    }
-
+static int is_update_correct(const int updates[], const PageRule *rules, const int rules_count) {
+    // inspect each page
     for (int i = 0; i < UPDATE_MAX_COUNT; i++) {
-        const int current = line[i];
+        const int current_page = updates[i];
 
-        const PageRule *filtered_rules[rules_count];
-        int filtered_rules_count = 0;
-        filter_rules_by_before(current, rules, rules_count, filtered_rules, &filtered_rules_count);
+        if (current_page < 0) {
+            break;
+        }
 
-        for (int j = 0; j < filtered_rules_count; j++) {
-            const PageRule *rule = filtered_rules[j];
+        // get rules for current page (before == page)
+        int pages_after[rules_count];
+        filter_rules_by_before(current_page, rules, rules_count, pages_after);
 
-            // go backward and check if previous aren't supposed to be after
-            for (int k = i - 1; k >= 0; k--) {
-                if (line[k] == rule->after) {
+        // inspect each rules
+        for (int j = 0; j < rules_count; j++) {
+            const int page_after = pages_after[j];
+
+            if (page_after == -1) {
+                break;
+            }
+
+            // check if a previous page is supposed to be after
+            for (int k = 0; k < i; k++) {
+                if (page_after == updates[k]) {
                     return 0;
                 }
             }
@@ -58,41 +58,53 @@ static int is_update_correct(const int **updates, const PageRule *rules, const i
     return 1;
 }
 
-static void set_correct_updates(const int **updates, const int updates_count,
+static void set_correct_updates(const int *updates[], const int updates_count,
                                 const PageRule *rules, const int rules_count,
-                                const int **correct_updates) {
+                                const int *correct_updates[], int *correct_updates_count) {
     int correct_updates_index = 0;
+    for (int i = 0; i < updates_count; i++) {
+        correct_updates[i] = NULL;
+
+        if (is_update_correct(updates[i], rules, rules_count)) {
+            correct_updates[correct_updates_index] = updates[i];
+            correct_updates_index++;
+        }
+    }
+    *correct_updates_count = correct_updates_index;
+}
+
+static int get_middle_value(const int updates_line[]) {
+    int count = 0;
+    while (count < UPDATE_MAX_COUNT) {
+        if (updates_line[count] < 0) {
+            break;
+        }
+
+        count++;
+    }
+
+    const int mid = count / 2;
+    return updates_line[mid];
+}
+
+static int get_total(const int *updates[], const int updates_count) {
+    int total = 0;
     for (int i = 0; i < updates_count; i++) {
         const int *current = updates[i];
 
-        if (is_update_correct(updates, rules, rules_count, i)) {
-            // current update is correct => copy pointer to collection
-            correct_updates[correct_updates_index++] = current;
-        }
-    }
-}
-
-static int get_total(const int **updates, const int updates_count) {
-    int total = 0;
-    for (int i = 0; updates[i] != NULL && i < updates_count; i++) {
-        const int *current = updates[i];
-
-        int count = 0;
-        while (current[count] != -1 && count < UPDATE_MAX_COUNT) {
-            count++;
+        if (current == NULL) {
+            break;
         }
 
-        const int mid = (count - 1) / 2;
-        total += current[mid];
+        const int middle_value = get_middle_value(current);
+        total += middle_value;
     }
 
     return total;
 }
 
-int get_answer_day05_part1_test() {
-    const int rules_count = 21;
-    const int updates_count = 6;
-
+static int read_file_day05_and_return_answer(const int rules_count, const int updates_count,
+                                             const char *file_path) {
     PageRule rules[rules_count];
 
     int *updates[updates_count];
@@ -103,18 +115,13 @@ int get_answer_day05_part1_test() {
         }
     }
 
-    int *correct_updates[updates_count];
-    for (int i = 0; i < updates_count; i++) {
-        correct_updates[i] = NULL;
-    }
+    read_file_day05(file_path, rules, updates);
 
-    read_file_day05("../day_05/day05_test.txt", rules, updates);
+    const int correct_updates[updates_count];
+    int correct_updates_count;
+    set_correct_updates(updates, updates_count, rules, rules_count, correct_updates, &correct_updates_count);
 
-    qsort(rules, rules_count, sizeof(PageRule), compare_page_rules_before_after);
-
-    set_correct_updates(updates, updates_count, rules, rules_count, correct_updates);
-
-    const int total = get_total(correct_updates, updates_count);
+    const int total = get_total(correct_updates, correct_updates_count);
 
     for (int i = 0; i < updates_count; i++) {
         free(updates[i]);
@@ -123,6 +130,10 @@ int get_answer_day05_part1_test() {
     return total;
 }
 
+int get_answer_day05_part1_test() {
+    return read_file_day05_and_return_answer(21, 6, "../day_05/day05_test.txt");
+}
+
 int get_answer_day05_part1() {
-    return 0;
+    return read_file_day05_and_return_answer(1176, 204, "../day_05/day05.txt");
 }

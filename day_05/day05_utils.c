@@ -9,25 +9,25 @@
 #include "day05_utils.h"
 #include "../utils.h"
 
-int compare_page_rules_before_after(const void *left, const void *right) {
-    const PageRule pr_left = *(PageRule *) left;
-    const PageRule pr_right = *(PageRule *) right;
-    const int before_compare = COMPARE(pr_left.before, pr_right.before);
-    if (before_compare)
-        return before_compare;
-    return COMPARE(pr_left.after, pr_right.after);
-}
+// int compare_page_rules_before_after(const void *left, const void *right) {
+//     const PageRule pr_left = *(PageRule *) left;
+//     const PageRule pr_right = *(PageRule *) right;
+//     const int before_compare = COMPARE(pr_left.before, pr_right.before);
+//     if (before_compare)
+//         return before_compare;
+//     return COMPARE(pr_left.after, pr_right.after);
+// }
 
-int compare_page_rules_after_before(const void *left, const void *right) {
-    const PageRule pr_left = *(PageRule *) left;
-    const PageRule pr_right = *(PageRule *) right;
-    const int after_compare = COMPARE(pr_left.after, pr_right.after);
-    if (after_compare)
-        return after_compare;
-    return COMPARE(pr_left.before, pr_right.before);
-}
+// int compare_page_rules_after_before(const void *left, const void *right) {
+//     const PageRule pr_left = *(PageRule *) left;
+//     const PageRule pr_right = *(PageRule *) right;
+//     const int after_compare = COMPARE(pr_left.after, pr_right.after);
+//     if (after_compare)
+//         return after_compare;
+//     return COMPARE(pr_left.before, pr_right.before);
+// }
 
-void read_file_day05(const char *path, PageRule *rules, int **updates) {
+void read_file_day05(const char *path, PageRule *rules, int *updates[]) {
     FILE *file = fopen(path, "r");
 
     int i = 0;
@@ -39,13 +39,17 @@ void read_file_day05(const char *path, PageRule *rules, int **updates) {
         if (line_1[0] == '\n')
             break;
 
-        const char *token = strtok(line_1, &line_1_delimiter);
-        const int left = atoi(token);
-        token = strtok(NULL, &line_1_delimiter);
-        const int right = atoi(token);
+        char number[2];
+        strncpy(number, line_1, 2);
+        const int left = atoi(number);
+        strncpy(number, line_1 + 3, 2);
+        const int right = atoi(number);
 
-        rules[i++] = (PageRule){left, right};
+        const PageRule pr = {left, right};
+        rules[i] = pr;
         memset(line_1, 0, line_1_max_length);
+
+        i++;
     }
 
     i = 0;
