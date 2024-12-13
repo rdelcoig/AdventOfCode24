@@ -27,6 +27,85 @@
 //     return COMPARE(pr_left.before, pr_right.before);
 // }
 
+static void filter_rules_by_before(const int page, const PageRule *rules, const int rules_count,
+                                   int pages_after[]) {
+    int pages_after_count = 0;
+    for (int i = 0; i < rules_count; i++) {
+        // ensure that allocated memory is clean
+        pages_after[i] = -1;
+
+        const int current = rules[i].before;
+
+        if (current == page) {
+            // current rule matches => copy pointer to collection
+            pages_after[pages_after_count] = rules[i].after;
+            pages_after_count++;
+        }
+    }
+}
+
+static int get_middle_value(const int updates_line[]) {
+    int count = 0;
+    while (count < UPDATE_MAX_COUNT) {
+        if (updates_line[count] < 0) {
+            break;
+        }
+
+        count++;
+    }
+
+    const int mid = count / 2;
+    return updates_line[mid];
+}
+
+int is_day05_update_correct(const int updates[], const PageRule *rules, const int rules_count) {
+    // inspect each page
+    for (int i = 0; i < UPDATE_MAX_COUNT; i++) {
+        const int current_page = updates[i];
+
+        if (current_page < 0) {
+            break;
+        }
+
+        // get rules for current page (before == page)
+        int pages_after[rules_count];
+        filter_rules_by_before(current_page, rules, rules_count, pages_after);
+
+        // inspect each rules
+        for (int j = 0; j < rules_count; j++) {
+            const int page_after = pages_after[j];
+
+            if (page_after == -1) {
+                break;
+            }
+
+            // check if a previous page is supposed to be after
+            for (int k = 0; k < i; k++) {
+                if (page_after == updates[k]) {
+                    return 0;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+int get_day05_total(const int *updates[], const int updates_count) {
+    int total = 0;
+    for (int i = 0; i < updates_count; i++) {
+        const int *current = updates[i];
+
+        if (current == NULL) {
+            break;
+        }
+
+        const int middle_value = get_middle_value(current);
+        total += middle_value;
+    }
+
+    return total;
+}
+
 void read_file_day05(const char *path, PageRule *rules, int *updates[]) {
     FILE *file = fopen(path, "r");
 

@@ -19,4 +19,8 @@ typedef struct {
 
 void read_file_day05(const char *path, PageRule *rules, int **updates);
 
+int is_day05_update_correct(const int updates[], const PageRule *rules, const int rules_count);
+
+int get_day05_total(const int *updates[], const int updates_count);
+
 #endif //DAY05_UTILS_H
