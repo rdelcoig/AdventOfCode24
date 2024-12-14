@@ -7,6 +7,6 @@
 #include "day05_part2.h"
 
 void set_day05_answer(Answer2Parts *answer) {
-    answer->part_1 = get_answer_day05_part1(); // get_answer_day05_part1_test(); //
+    answer->part_1 = get_answer_day05_part1_test(); // get_answer_day05_part1(); //
     answer->part_2 = get_answer_day05_part2_test(); // get_answer_day05_part1(); //
 }

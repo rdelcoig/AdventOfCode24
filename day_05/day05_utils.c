@@ -27,8 +27,7 @@
 //     return COMPARE(pr_left.before, pr_right.before);
 // }
 
-static void filter_rules_by_before(const int page, const PageRule *rules, const int rules_count,
-                                   int pages_after[]) {
+void filter_rules_by_before(const int page, const PageRule *rules, const int rules_count, int pages_after[]) {
     int pages_after_count = 0;
     for (int i = 0; i < rules_count; i++) {
         // ensure that allocated memory is clean
