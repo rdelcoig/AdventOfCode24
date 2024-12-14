@@ -34,7 +34,7 @@ void control_day_04(const Answer2Parts *answer) {
 }
 
 void control_day_05(const Answer2Parts *answer) {
-    const Answer2Parts control = {143, 123};
-    // const Answer2Parts control = {5268, 0};
+    // const Answer2Parts control = {143, 123};
+    const Answer2Parts control = {5268, 5799};
     control_2_parts(answer, &control);
 }

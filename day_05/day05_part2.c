@@ -37,29 +37,32 @@ static void swap_order(int updates[], const int idx_left, const int idx_right) {
     }
 }
 
-static void set_reordered_updates(int **reordered_updates, int *reordered_updates_count) {
+static void set_reordered_updates(int ***reordered_updates, int *reordered_updates_count) {
     int reordered_updates_index = 0;
     for (int i = 0; i < updates_count; i++) {
         if (!is_day05_update_correct(updates[i], rules, rules_count)) {
-            int updates_tmp[UPDATE_MAX_COUNT];
-            memcpy(updates_tmp, updates[i], UPDATE_MAX_COUNT * sizeof(int));
+            int **result_array = *reordered_updates;
+            int **tmp = realloc(result_array, (reordered_updates_index + 1) * sizeof(int *));
 
-            for (int idx_left = 0; idx_left < UPDATE_MAX_COUNT; idx_left++) {
-                for (int idx_right = idx_left + 1; idx_right < UPDATE_MAX_COUNT; idx_right++) {
-                    swap_order(updates_tmp, idx_left, idx_right);
-                }
-            }
-
-            int **tmp = realloc(reordered_updates, (reordered_updates_index + 1) * sizeof(int *));
             if (tmp == NULL) {
-                perror("Out of memory");
-                free(reordered_updates);
+                perror("Realloc error");
+                free(result_array);
                 exit(1);
             }
 
-            reordered_updates = tmp;
-            reordered_updates[reordered_updates_index] = malloc(UPDATE_MAX_COUNT * sizeof(int));
-            memcpy(reordered_updates[reordered_updates_index], updates_tmp, UPDATE_MAX_COUNT * sizeof(int));
+            result_array = tmp;
+
+            int *tmp_line = malloc(UPDATE_MAX_COUNT * sizeof(int));
+            memcpy(tmp_line, updates[i], UPDATE_MAX_COUNT * sizeof(int));
+
+            for (int idx_left = 0; idx_left < UPDATE_MAX_COUNT; idx_left++) {
+                for (int idx_right = idx_left + 1; idx_right < UPDATE_MAX_COUNT; idx_right++) {
+                    swap_order(tmp_line, idx_left, idx_right);
+                }
+            }
+
+            result_array[reordered_updates_index] = tmp_line;
+            *reordered_updates = result_array;
             reordered_updates_index++;
         }
     }
@@ -79,9 +82,9 @@ static int read_file_and_return_answer(const char *file_path) {
 
     read_file_day05(file_path, rules, updates);
 
-    int **reordered_updates = malloc(0 * sizeof(int *));
+    int **reordered_updates = NULL;
     int reordered_updates_count;
-    set_reordered_updates(reordered_updates, &reordered_updates_count);
+    set_reordered_updates(&reordered_updates, &reordered_updates_count);
 
     const int total = get_day05_total(reordered_updates, reordered_updates_count);
 
