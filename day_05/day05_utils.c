@@ -7,25 +7,6 @@
 #include <stdlib.h>
 
 #include "day05_utils.h"
-#include "../utils.h"
-
-// int compare_page_rules_before_after(const void *left, const void *right) {
-//     const PageRule pr_left = *(PageRule *) left;
-//     const PageRule pr_right = *(PageRule *) right;
-//     const int before_compare = COMPARE(pr_left.before, pr_right.before);
-//     if (before_compare)
-//         return before_compare;
-//     return COMPARE(pr_left.after, pr_right.after);
-// }
-
-// int compare_page_rules_after_before(const void *left, const void *right) {
-//     const PageRule pr_left = *(PageRule *) left;
-//     const PageRule pr_right = *(PageRule *) right;
-//     const int after_compare = COMPARE(pr_left.after, pr_right.after);
-//     if (after_compare)
-//         return after_compare;
-//     return COMPARE(pr_left.before, pr_right.before);
-// }
 
 static int reallocate_int(int **array, const int array_size) {
     int *new_array = realloc(*array, array_size * sizeof(int));

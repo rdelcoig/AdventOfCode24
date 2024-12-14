@@ -9,17 +9,37 @@
 #include "day05.h"
 #include "day05_utils.h"
 
+static int rules_compare(const void *left, const void *right) {
+    const PageRule pr_left = *(PageRule *) left;
+    const PageRule pr_right = *(PageRule *) right;
+    const int before_compare = COMPARE(pr_left.before, pr_right.before);
+    if (before_compare)
+        return before_compare;
+    return COMPARE(pr_left.after, pr_right.after);
+}
+
 static int search_page_rule(const int a, const int b,
                             PageRule **rules, const int rules_count,
                             PageRule *rule_to_return) {
-    for (int i = 0; i < rules_count; i++) {
-        PageRule rule = *(*rules + i);
-        if ((rule.before == a && rule.after == b)
-            || (rule.before == b && rule.after == a)) {
-            *rule_to_return = rule;
-            return 1;
-        }
+    PageRule test_rule = {a, b};
+    const PageRule *result = bsearch(&test_rule, *rules, rules_count, sizeof(PageRule), rules_compare);
+
+    if (result) {
+        *rule_to_return = *result;
+        return 1;
     }
+
+    // when not found, swap parameters and search again
+
+    test_rule.before = b;
+    test_rule.after = a;
+    result = bsearch(&test_rule, *rules, rules_count, sizeof(PageRule), rules_compare);
+
+    if (result) {
+        *rule_to_return = *result;
+        return 1;
+    }
+
     rule_to_return = NULL;
     return 0;
 }
@@ -30,7 +50,7 @@ static int set_order(int **updates, const int idx_left, const int idx_right,
     const int right = (*updates)[idx_right];
 
     PageRule rule;
-    int found = search_page_rule(left, right, &rules, rules_count, &rule);
+    const int found = search_page_rule(left, right, &rules, rules_count, &rule);
 
     if (found && rule.after == left) {
         const int tmp = (*updates)[idx_left];
@@ -96,6 +116,8 @@ void set_day05_answer(Answer2Parts *answer) {
     int **updates = NULL;
 
     read_file_day05(path, &rules, &rules_count, &updates, &updates_count);
+
+    qsort(rules, rules_count, sizeof(PageRule), rules_compare);
 
     int **correct_updates = NULL;
     int **incorrect_updates = NULL;

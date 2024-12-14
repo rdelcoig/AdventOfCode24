@@ -13,10 +13,6 @@ typedef struct {
     int after;
 } PageRule;
 
-// int compare_page_rules_before_after(const void *left, const void *right);
-
-// int compare_page_rules_after_before(const void *left, const void *right);
-
 int reallocate_updates(int ***updates, const int updates_count);
 
 int reallocate_updates_line(int **updates_line, const int updates_count);
