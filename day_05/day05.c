@@ -2,11 +2,135 @@
 // Created by romain on 11/12/24.
 //
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "day05.h"
-#include "day05_part1.h"
-#include "day05_part2.h"
+#include "day05_utils.h"
+
+static int search_page_rule(const int a, const int b,
+                            PageRule **rules, const int rules_count,
+                            PageRule *rule_to_return) {
+    for (int i = 0; i < rules_count; i++) {
+        PageRule rule = *(*rules + i);
+        if ((rule.before == a && rule.after == b)
+            || (rule.before == b && rule.after == a)) {
+            *rule_to_return = rule;
+            return 1;
+        }
+    }
+    rule_to_return = NULL;
+    return 0;
+}
+
+static int set_order(int **updates, const int idx_left, const int idx_right,
+                     PageRule *rules, const int rules_count) {
+    const int left = (*updates)[idx_left];
+    const int right = (*updates)[idx_right];
+
+    PageRule rule;
+    int found = search_page_rule(left, right, &rules, rules_count, &rule);
+
+    if (found && rule.after == left) {
+        const int tmp = (*updates)[idx_left];
+        (*updates)[idx_left] = (*updates)[idx_right];
+        (*updates)[idx_right] = tmp;
+        return 1;
+    }
+    return 0;
+}
+
+static void reorder_updates(int ***unordered_updates, const int updates_count,
+                            PageRule *rules, const int rules_count) {
+    // for each line
+    for (int i = 0; i < updates_count; i++) {
+        const int *updates_line = (*unordered_updates)[i];
+        if (updates_line == NULL) {
+            break;
+        }
+
+        // for each page
+        for (int j = 0; j < UPDATE_MAX_COUNT && updates_line[j] > -1; j++) {
+            // test each previous page with current
+            for (int k = 0; k < j; k++) {
+                set_order(&updates_line, k, j, rules, rules_count);
+            }
+        }
+    }
+}
+
+static void separate_updates(int ***updates, const int updates_count,
+                             const PageRule **rules, const int rules_count,
+                             int ***correct_updates, int *correct_updates_count,
+                             int ***incorrect_updates, int *incorrect_updates_count) {
+    *correct_updates_count = 0;
+    *incorrect_updates_count = 0;
+    for (int i = 0; i < updates_count; i++) {
+        int *updates_line = (*updates)[i];
+        if (is_day05_update_correct(updates_line, rules, rules_count)) {
+            if (!reallocate_updates(correct_updates, *correct_updates_count + 1)) {
+                perror("Reallocate correct_updates error");
+                exit(1);
+            }
+            *(*correct_updates + *correct_updates_count) = updates_line;
+            (*correct_updates_count)++;
+        } else {
+            if (!reallocate_updates(incorrect_updates, *incorrect_updates_count + 1)) {
+                perror("Reallocate incorrect_updates error");
+                exit(1);
+            }
+
+            *(*incorrect_updates + *incorrect_updates_count) = updates_line;
+            (*incorrect_updates_count)++;
+        }
+    }
+}
 
 void set_day05_answer(Answer2Parts *answer) {
-    answer->part_1 = get_answer_day05_part1(); // get_answer_day05_part1_test(); //
-    answer->part_2 = get_answer_day05_part2(); // get_answer_day05_part2_test(); //
+    //const char *path = "../day_05/day05_test.txt";
+    const char *path = "../day_05/day05.txt";
+
+    int rules_count, updates_count;
+    PageRule *rules = NULL;
+    int **updates = NULL;
+
+    read_file_day05(path, &rules, &rules_count, &updates, &updates_count);
+
+    int **correct_updates = NULL;
+    int **incorrect_updates = NULL;
+    int correct_updates_count, incorrect_updates_count;
+
+    separate_updates(&updates, updates_count, &rules, rules_count,
+                     &correct_updates, &correct_updates_count,
+                     &incorrect_updates, &incorrect_updates_count);
+
+    reorder_updates(&incorrect_updates, incorrect_updates_count, rules, rules_count);
+
+    answer->part_1 = get_day05_total(correct_updates, correct_updates_count);
+    answer->part_2 = get_day05_total(incorrect_updates, incorrect_updates_count);
+
+    if (updates != NULL) {
+        for (int i = 0; i < updates_count; i++) {
+            int *current = updates[i];
+            if (current != NULL) {
+                free(current);
+            }
+        }
+        free(updates);
+    }
+
+    if (correct_updates != NULL) {
+        // items have already been freed
+        free(correct_updates);
+    }
+
+    if (incorrect_updates != NULL) {
+        // items have already been freed
+        free(incorrect_updates);
+    }
+
+    if (rules != NULL) {
+        free(rules);
+    }
 }

@@ -27,23 +27,43 @@
 //     return COMPARE(pr_left.before, pr_right.before);
 // }
 
-void filter_rules_by_before(const int page, const PageRule *rules, const int rules_count, int pages_after[]) {
+static int reallocate_int(int **array, const int array_size) {
+    int *new_array = realloc(*array, array_size * sizeof(int));
+    if (new_array == NULL) {
+        perror("Out of memory");
+        return 0;
+    }
+    *array = new_array;
+    return 1;
+}
+
+static int add_value_to_array(int **array, const int array_size, const int value) {
+    if (!reallocate_int(array, array_size + 1)) {
+        return 0;
+    }
+    (*array)[array_size] = value;
+    return 1;
+}
+
+static void filter_rules_by_before(const int page, const PageRule **rules, const int rules_count, int **pages_after) {
     int pages_after_count = 0;
+
     for (int i = 0; i < rules_count; i++) {
-        // ensure that allocated memory is clean
-        pages_after[i] = -1;
+        const PageRule current = (*rules)[i];
 
-        const int current = rules[i].before;
-
-        if (current == page) {
-            // current rule matches => copy pointer to collection
-            pages_after[pages_after_count] = rules[i].after;
+        if (current.before == page) {
+            if (!add_value_to_array(pages_after, pages_after_count, current.after)) {
+                perror("Reallocate pages after error");
+                exit(1);
+            }
             pages_after_count++;
         }
+
+        add_value_to_array(pages_after, pages_after_count, -1);
     }
 }
 
-static int get_middle_value(const int updates_line[]) {
+static int get_middle_value(const int *updates_line) {
     int count = 0;
     while (count < UPDATE_MAX_COUNT) {
         if (updates_line[count] < 0) {
@@ -57,39 +77,46 @@ static int get_middle_value(const int updates_line[]) {
     return updates_line[mid];
 }
 
-int is_day05_update_correct(const int updates[], const PageRule *rules, const int rules_count) {
-    // inspect each page
-    for (int i = 0; i < UPDATE_MAX_COUNT; i++) {
-        const int current_page = updates[i];
-
-        if (current_page < 0) {
-            break;
-        }
-
+int is_day05_update_correct(const int *updates_line, const PageRule **rules, const int rules_count) {
+    int found_page = 0;
+    int update_index = 1;
+    while (*(updates_line + update_index) > -1) {
+        const int current_page = *(updates_line + update_index);
         // get rules for current page (before == page)
-        int pages_after[rules_count];
-        filter_rules_by_before(current_page, rules, rules_count, pages_after);
+        int *pages_after = NULL;
+        filter_rules_by_before(current_page, rules, rules_count, &pages_after);
 
-        // inspect each rules
-        for (int j = 0; j < rules_count; j++) {
-            const int page_after = pages_after[j];
-
-            if (page_after == -1) {
+        for (int i = 0; i < rules_count; i++) {
+            const int current_page_after = *(pages_after + i);
+            if (current_page_after <= -1) {
                 break;
             }
 
             // check if a previous page is supposed to be after
-            for (int k = 0; k < i; k++) {
-                if (page_after == updates[k]) {
-                    return 0;
+            const int *previous_page = updates_line + update_index - 1;
+            while (previous_page >= updates_line) {
+                if (*previous_page == current_page_after) {
+                    found_page = 1;
+                    break;
                 }
+                previous_page--;
+            }
+
+            if (found_page) {
+                break;
             }
         }
+
+        free(pages_after);
+        if (found_page) {
+            break;
+        }
+        update_index++;
     }
-    return 1;
+    return !found_page;
 }
 
-int get_day05_total(const int *updates[], const int updates_count) {
+int get_day05_total(const int **updates, const int updates_count) {
     int total = 0;
     for (int i = 0; i < updates_count; i++) {
         const int *current = updates[i];
@@ -105,30 +132,54 @@ int get_day05_total(const int *updates[], const int updates_count) {
     return total;
 }
 
-void read_file_day05(const char *path, PageRule *rules, int *updates[]) {
+static int reallocate_rules(PageRule **rules, const int rules_count) {
+    PageRule *new_rules = realloc(*rules, rules_count * sizeof(PageRule *));
+    if (new_rules == NULL) {
+        perror("Out of memory");
+        return 0;
+    }
+    *rules = new_rules;
+    return 1;
+}
+
+int reallocate_updates(int ***updates, const int updates_count) {
+    int **new_updates = realloc(*updates, updates_count * sizeof(int *));
+    if (new_updates == NULL) {
+        perror("Out of memory");
+        return 0;
+    }
+    *updates = new_updates;
+    return 1;
+}
+
+int reallocate_updates_line(int **updates_line, const int updates_count) {
+    int *new_updates = realloc(*updates_line, updates_count * sizeof(int *));
+    if (new_updates == NULL) {
+        perror("Out of memory");
+        return 0;
+    }
+    *updates_line = new_updates;
+    return 1;
+}
+
+void read_file_day05(const char *path, PageRule **rules, int *rules_count,
+                     int ***updates, int *updates_count) {
     FILE *file = fopen(path, "r");
 
     int i = 0;
 
-    const char line_1_delimiter = '|';
-    const int line_1_max_length = RULE_LINE_MAX_SIZE + 2; // 2 digits + delimiter + 2 digits + line feed + null pointer
-    char line_1[line_1_max_length];
-    while (fgets(line_1, line_1_max_length, file) != NULL) {
-        if (line_1[0] == '\n')
-            break;
-
-        char number[2];
-        strncpy(number, line_1, 2);
-        const int left = atoi(number);
-        strncpy(number, line_1 + 3, 2);
-        const int right = atoi(number);
-
+    const int left, right;
+    while (fscanf(file, "%d|%d\n", &left, &right) == 2) {
         const PageRule pr = {left, right};
-        rules[i] = pr;
-        memset(line_1, 0, line_1_max_length);
-
-        i++;
+        if (!reallocate_rules(rules, i + 1)) {
+            perror("Reallocate rules error");
+            exit(1);
+        }
+        (*rules)[i++] = pr;
     }
+    *rules_count = i;
+
+    fseek(file, -2, SEEK_CUR);
 
     i = 0;
 
@@ -138,15 +189,32 @@ void read_file_day05(const char *path, PageRule *rules, int *updates[]) {
     while (fgets(line_2, line_2_max_length, file) != NULL) {
         const char *token = strtok(line_2, &file_part2_delimiter);
 
+        int *updates_line = NULL;
         int j = 0;
         while (token) {
-            updates[i][j] = atoi(token);
+            if (!reallocate_updates_line(&updates_line, j + 1)) {
+                perror("Reallocate updates line error");
+                exit(1);
+            }
+            updates_line[j] = atoi(token);
             token = strtok(NULL, &file_part2_delimiter);
             j++;
         }
 
-        i++;
+        if (!reallocate_updates_line(&updates_line, j + 1)) {
+            perror("Reallocate updates line error");
+            exit(1);
+        }
+        updates_line[j] = -1;
+
+        if (!reallocate_updates(updates, i + 1)) {
+            perror("Reallocate updates error");
+            exit(1);
+        }
+
+        (*updates)[i++] = updates_line;
     }
+    *updates_count = i;
 
     fclose(file);
 }
