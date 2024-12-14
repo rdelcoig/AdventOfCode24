@@ -7,6 +7,7 @@
 #include "day_03/day03.h"
 #include "day_04/day04.h"
 #include "day_05/day05.h"
+#include "day_06/day06.h"
 
 static void print_answer(void (*set_answer)(Answer2Parts *), void (*control_day)(const Answer2Parts *), const int day) {
     Answer2Parts answer;
@@ -26,6 +27,7 @@ int main(void) {
     print_answer(set_day03_answer, control_day_03, 3);
     print_answer(set_day04_answer, control_day_04, 4);
     print_answer(set_day05_answer, control_day_05, 5);
+    print_answer(set_day06_answer, control_day_06, 6);
 
     return 0;
 }

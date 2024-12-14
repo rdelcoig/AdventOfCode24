@@ -18,4 +18,5 @@ add_executable(AdventOfCode24
         day_04/day04_part2.c
         day_04/day04.c
         day_05/day05_utils.c
-        day_05/day05.c)
+        day_05/day05.c
+        day_06/day06.c)

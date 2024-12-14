@@ -24,4 +24,8 @@ typedef struct {
 
 Point add_points(const Point *point1, const Point *point2);
 
+int reallocate_int_array(int **array, const int new_count);
+
+int reallocate_int_jagged_array(int ***array, const int new_count);
+
 #endif //UTILS_H
