@@ -5,6 +5,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <stdlib.h>
+
 #define COMPARE(l,r) ((l < r) ? -1 : (l > r))
 
 typedef struct {
@@ -24,7 +26,7 @@ typedef struct {
 
 Point add_points(const Point *point1, const Point *point2);
 
-int reallocate_int_array(int **array, const int new_count);
+int reallocate_int_array(int **array, const size_t new_count);
 
 int reallocate_int_jagged_array(int ***array, const int new_count);
 
