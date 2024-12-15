@@ -5,7 +5,7 @@
 #ifndef DAY06_MAP_H
 #define DAY06_MAP_H
 
-#include "../utils.h"
+#include "../common/utils.h"
 
 char read_map(const int **map, const TableSize *size, const Point *point);
 

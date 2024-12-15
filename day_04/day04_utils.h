@@ -5,7 +5,7 @@
 #ifndef FILE_DAY04_H
 #define FILE_DAY04_H
 
-#include "../utils.h"
+#include "../common/utils.h"
 
 void read_file_day04(const char *path, const TableSize *size, char **raw_data);
 

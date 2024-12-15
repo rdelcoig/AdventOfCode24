@@ -6,7 +6,7 @@
 
 #include "day04_part1.h"
 #include "day04_utils.h"
-#include "../utils.h"
+#include "../common/utils.h"
 
 static int has_next_matching(char **table, const TableSize *size, const Point *current, const Point *direction) {
     Point next = *current;

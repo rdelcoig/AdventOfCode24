@@ -5,7 +5,7 @@
 #ifndef DAY06_AGENT_H
 #define DAY06_AGENT_H
 
-#include "../utils.h"
+#include "../common/utils.h"
 
 void get_agent_position(const int **map, const TableSize *size, Point *point);
 

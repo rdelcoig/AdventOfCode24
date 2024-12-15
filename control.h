@@ -5,7 +5,7 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
-#include "utils.h"
+#include "common/utils.h"
 
 void control_day_01(const Answer2Parts *answer);
 

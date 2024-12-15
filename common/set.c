@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../utils.h"
+#include "utils.h"
 
 static int int_compare(const void *left, const void *right) {
     const int int_left = *(int *) left;

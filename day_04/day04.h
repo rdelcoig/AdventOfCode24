@@ -5,7 +5,7 @@
 #ifndef DAY04_H
 #define DAY04_H
 
-#include "../utils.h"
+#include "../common/utils.h"
 
 void set_day04_answer(Answer2Parts *answer);
 

@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "utils.h"
+#include "common/utils.h"
 #include "control.h"
 #include "day_01/day01.h"
 #include "day_02/day02.h"

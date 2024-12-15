@@ -6,7 +6,7 @@
 
 #include "day04_part2.h"
 #include "day04_utils.h"
-#include "../utils.h"
+#include "../common/utils.h"
 
 static Point get_opposite_corner(const Point *point) {
     const Point opposite = {point->x * -1, point->y * -1};

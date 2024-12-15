@@ -6,7 +6,7 @@
 #include <string.h>
 
 #include "day01.h"
-#include "../utils.h"
+#include "../common/utils.h"
 
 #define ARRAY_SIZE 1000
 
