@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 
 #include "common/utils.h"
 #include "day_01/day01.h"
@@ -20,17 +21,20 @@ int main(void) {
         {5080, 0}
     };
 
-    Answer2Parts answers[days];
-    set_day01_answer(&answers[0]);
-    set_day02_answer(&answers[1]);
-    set_day03_answer(&answers[2]);
-    set_day04_answer(&answers[3]);
-    set_day05_answer(&answers[4]);
-    set_day06_answer(&answers[5]);
+    void (*calls[days])(Answer2Parts *);
+    calls[0] = set_day01_answer;
+    calls[1] = set_day02_answer;
+    calls[2] = set_day03_answer;
+    calls[3] = set_day04_answer;
+    calls[4] = set_day05_answer;
+    calls[5] = set_day06_answer;
 
-    for (int i = 0; i < days; i++) {
+    const int start = days - 6;
+    for (int i = start; i < days; i++) {
+        Answer2Parts answer;
+        calls[i](&answer);
+
         const int day = i + 1;
-        const Answer2Parts answer = answers[i];
         printf("\nDay %02d results\n--------------\n", day);
         printf("Part 1 : %d\n", answer.part_1);
         printf("Part 2 : %d\n", answer.part_2);

@@ -11,7 +11,6 @@
 
 #include "../common/set.h"
 
-
 static int get_unique_positions(const int **map, const TableSize *size) {
     Point agent_position;
     get_agent_position(map, size, &agent_position);
