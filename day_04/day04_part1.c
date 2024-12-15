@@ -15,7 +15,7 @@ static int has_next_matching(char **table, const TableSize *size, const Point *c
         const Point next_tmp = add_points(&next, direction);
         next = next_tmp;
 
-        if (is_out_of_bounds(&next, size)) {
+        if (is_out_of_bounds(size, &next)) {
             return 0;
         }
 

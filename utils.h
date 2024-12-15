@@ -26,6 +26,10 @@ typedef struct {
 
 Point add_points(const Point *point1, const Point *point2);
 
+int is_out_of_bounds(const TableSize *size, const Point *point);
+
+int equals(const Point *left, const Point *right);
+
 int reallocate_int_array(int **array, const size_t new_count);
 
 int reallocate_int_jagged_array(int ***array, const int new_count);

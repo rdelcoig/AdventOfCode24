@@ -28,5 +28,6 @@ int main(void) {
     print_answer(set_day04_answer, control_day_04, 4);
     print_answer(set_day05_answer, control_day_05, 5);
     print_answer(set_day06_answer, control_day_06, 6);
+
     return 0;
 }

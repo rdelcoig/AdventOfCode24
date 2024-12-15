@@ -15,7 +15,7 @@ static Point get_opposite_corner(const Point *point) {
 
 static int has_word(char **table, const TableSize *size, const Point *current, const Point *corner) {
     Point point = add_points(current, corner);
-    if (is_out_of_bounds(&point, size)) {
+    if (is_out_of_bounds(size, &point)) {
         return 0;
     }
 
@@ -26,7 +26,7 @@ static int has_word(char **table, const TableSize *size, const Point *current, c
 
     const Point opposite_corner = get_opposite_corner(corner);
     point = add_points(current, &opposite_corner);
-    if (is_out_of_bounds(&point, size)) {
+    if (is_out_of_bounds(size, &point)) {
         return 0;
     }
 

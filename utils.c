@@ -11,6 +11,14 @@ inline Point add_points(const Point *point1, const Point *point2) {
     return (Point){point1->x + point2->x, point1->y + point2->y};
 }
 
+inline int is_out_of_bounds(const TableSize *size, const Point *point) {
+    return point->x < 0 || point->x >= size->columns || point->y < 0 || point->y >= size->lines;
+}
+
+inline int equals(const Point *left, const Point *right) {
+    return left->x == right->x && left->y == right->y;
+}
+
 int reallocate_int_array(int **array, const size_t new_count) {
     int *new_array = realloc(*array, new_count * sizeof(int *));
     if (new_array == NULL) {
