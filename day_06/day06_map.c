@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "day06_map.h"
 
@@ -33,7 +34,7 @@ void print_map(const int **map, const TableSize *size) {
     putchar('\n');
 }
 
-void read_file_day06(const char *path, int ***map, TableSize *size) {
+void read_file_day06(const char *path, int ***map_ptr, TableSize *size) {
     FILE *file = fopen(path, "r");
 
     if (file == NULL) {
@@ -41,32 +42,35 @@ void read_file_day06(const char *path, int ***map, TableSize *size) {
         exit(1);
     }
 
-    int width = 0;
-    char c;
-    while ((c = fgetc(file)) != EOF) {
-        if (c == '\n' && width == 0) {
-            break;
-        }
+    size->lines = 0;
+    size->columns = 0;
 
-        if (size->lines == 0) {
-            size->lines++;
-            *map = malloc(sizeof(int *));
-        }
-
-        int *line = *(*map + size->lines - 1);
-
-        if (c == '\n') {
-            reallocate_int_jagged_array(map, size->lines + 1);
-            size->lines++;
-            size->columns = width;
-            width = 0;
-        } else {
-            reallocate_int_array(&line, width + 1);
-            line[width] = (int) c;
-            width++;
-            (*map)[size->lines - 1] = line;
-        }
+    // read a 1st time to get size
+    const int size_buffer = 1024;
+    char buffer[size_buffer];
+    while (fgets(buffer, size_buffer, file)) {
+        size->lines++;
+        size->columns = (int) strlen(buffer);
     }
 
+    // init 2D array
+    int **map = malloc(size->lines * sizeof(int **));
+    for (int i = 0; i < size->lines; i++) {
+        map[i] = malloc(size->columns * sizeof(int));
+    }
+
+    // read again to fill the array
+    fseek(file, 0, SEEK_SET);
+    int lines_index = 0;
+    while (fgets(buffer, size_buffer, file)) {
+        for (int columns_index = 0; columns_index < size->columns; columns_index++) {
+            map[lines_index][columns_index] = (int) buffer[columns_index];
+        }
+        lines_index++;
+    }
+
+    //print_map(map, size);
+
+    *map_ptr = map;
     fclose(file);
 }

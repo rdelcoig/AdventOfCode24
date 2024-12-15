@@ -13,6 +13,6 @@ void write_in_map(int **map, const TableSize *size, const Point *point, const ch
 
 void print_map(const int **map, const TableSize *size);
 
-void read_file_day06(const char *path, int ***map, TableSize *size);
+void read_file_day06(const char *path, int ***map_ptr, TableSize *size);
 
 #endif //DAY06_MAP_H

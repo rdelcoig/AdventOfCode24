@@ -44,7 +44,7 @@ static int get_unique_positions(const int **map, const TableSize *size) {
 }
 
 void set_day06_answer(Answer2Parts *answer) {
-    //const char *path = "../day_06/day06_test.txt";
+    // const char *path = "../day_06/day06_test.txt";
     const char *path = "../day_06/day06.txt";
 
     int **map_tmp = NULL;

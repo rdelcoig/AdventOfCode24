@@ -19,23 +19,16 @@ inline int equals(const Point *left, const Point *right) {
     return left->x == right->x && left->y == right->y;
 }
 
-int reallocate_int_array(int **array, const size_t new_count) {
-    int *new_array = realloc(*array, new_count * sizeof(int *));
-    if (new_array == NULL) {
-        perror("Out of memory");
-        return 0;
-    }
-    *array = new_array;
-    return 1;
-}
+// works only for 1D array
+int reallocate_int_array(int **array_ptr, const size_t new_count) {
+    int *array = *array_ptr;
+    const size_t new_size = new_count * sizeof(int);
 
-// TODO should be removed
-int reallocate_int_jagged_array(int ***array, const int new_count) {
-    int **new_array = realloc(*array, new_count * sizeof(int *));
+    int *new_array = (int *) realloc(array, new_size);
     if (new_array == NULL) {
         perror("Out of memory");
         return 0;
     }
-    *array = new_array;
+    *array_ptr = new_array;
     return 1;
 }
