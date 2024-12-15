@@ -5,7 +5,6 @@ set(CMAKE_C_STANDARD 23)
 
 add_executable(AdventOfCode24
         main.c
-        control.c
         common/utils.c
         common/set.c
         day_01/day01.c
