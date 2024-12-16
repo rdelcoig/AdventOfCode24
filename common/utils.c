@@ -26,8 +26,11 @@ int reallocate_int_array(int **array_ptr, const size_t new_count) {
 
     int *new_array = (int *) realloc(array, new_size);
     if (new_array == NULL) {
-        perror("Out of memory");
-        return 0;
+        printf("Error: not enough memory\n");
+        if (array != NULL) {
+            free(array);
+        }
+        exit(1);
     }
     *array_ptr = new_array;
     return 1;
