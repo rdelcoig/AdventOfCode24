@@ -6,6 +6,9 @@
 #include <stdlib.h>
 
 #include "day06.h"
+
+#include <limits.h>
+
 #include "day06_map.h"
 #include "day06_agent.h"
 #include "../common/set.h"
@@ -19,18 +22,16 @@ static void decode_point(const int code, Point *point) {
     point->y = code % 10000;
 }
 
-// TODO rename set position history or something
-static int get_unique_positions(const int **map, const TableSize *size, SetInt *move_history) {
+static void set_unique_positions(const int **map, const TableSize *size, SetInt *move_history) {
     Point agent_position;
     get_agent_position(map, size, &agent_position);
-    int distinct_positions = 0;
 
     const int max_iterations = 100000;
 
     for (int i = 0; i < max_iterations; i++) {
         // store the current position if not already visited
         const int code = encode_point(&agent_position);
-        distinct_positions += add_set_value(move_history, code);
+        add_set_value(move_history, code);
 
         // move the agent
         const Point current_position = agent_position;
@@ -47,7 +48,15 @@ static int get_unique_positions(const int **map, const TableSize *size, SetInt *
 
         // print_map(map, &size);
     }
-    return distinct_positions;
+}
+
+int get_patrol_infinite_loops_count(const int **map, const TableSize *size, int *move_history) {
+    Point start_agent_position;
+    get_agent_position(map, size, &start_agent_position);
+    const char start_direction = read_map(map, size, &start_agent_position);
+
+
+    return 0;
 }
 
 void set_day06_answer(Answer2Parts *answer) {
@@ -60,9 +69,14 @@ void set_day06_answer(Answer2Parts *answer) {
     const int **map = map_tmp;
 
     SetInt *move_history = create_set();
+    set_unique_positions(map, &size, move_history);
 
-    answer->part_1 = get_unique_positions(map, &size, move_history);
-    answer->part_2 = 0;
+    if (move_history->count > INT_MAX) {
+        printf("Too many moves\n");
+    } else {
+        answer->part_1 = (int) move_history->count;
+        answer->part_2 = 0;
+    }
 
     if (map_tmp != NULL) {
         for (int i = 0; i < size.lines; i++) {

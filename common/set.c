@@ -3,11 +3,10 @@
 //
 
 #include "set.h"
+#include "utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "utils.h"
 
 static int int_compare(const void *left, const void *right) {
     const int int_left = *(int *) left;
@@ -16,7 +15,6 @@ static int int_compare(const void *left, const void *right) {
 }
 
 int contains_set_value(const SetInt *set, const int key, size_t *index) {
-    //int contains_set_value(const int *set, const size_t count, const int key, size_t *index) {
     if (set == NULL || set->values == NULL) {
         return 0;
     }
