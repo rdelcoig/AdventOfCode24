@@ -7,8 +7,17 @@
 
 #include <stddef.h>
 
-int contains_set_value(const int *set, const size_t count, const int key, size_t *index);
+typedef struct {
+    int *values;
+    size_t count;
+} SetInt;
 
-int add_set_value(int **ptr, const size_t count, const int value);
+SetInt *create_set();
+
+void free_set(SetInt *set);
+
+int contains_set_value(const SetInt *set, const int key, size_t *index);
+
+int add_set_value(SetInt *set, const int value);
 
 #endif //SET_H

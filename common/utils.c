@@ -21,14 +21,13 @@ inline int equals(const Point *left, const Point *right) {
 
 // works only for 1D array
 int reallocate_int_array(int **array_ptr, const size_t new_count) {
-    int *array = *array_ptr;
     const size_t new_size = new_count * sizeof(int);
 
-    int *new_array = (int *) realloc(array, new_size);
+    int *new_array = (int *) realloc(*array_ptr, new_size);
     if (new_array == NULL) {
         printf("Error: not enough memory\n");
-        if (array != NULL) {
-            free(array);
+        if (*array_ptr != NULL) {
+            free(*array_ptr);
         }
         exit(1);
     }

@@ -12,9 +12,9 @@ void read_file_day04(const char *path, const TableSize *size, char **raw_data) {
     FILE *file = fopen(path, "r");
 
     int i = 0;
-    char *line = NULL;
-    size_t len = 0;
-    while (getline(&line, &len, file) != -1 && i < size->lines) {
+    const int size_buffer = 200;
+    char line[size_buffer];
+    while (fgets(line, size_buffer, file) != NULL && i < size->lines) {
         strncpy(raw_data[i], line, size->columns);
         i++;
     }

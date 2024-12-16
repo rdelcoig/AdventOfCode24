@@ -8,21 +8,29 @@
 #include "day06.h"
 #include "day06_map.h"
 #include "day06_agent.h"
-
 #include "../common/set.h"
 
-static int get_unique_positions(const int **map, const TableSize *size) {
+static int encode_point(const Point *point) {
+    return point->x * 10000 + point->y;
+}
+
+static void decode_point(const int code, Point *point) {
+    point->x = code / 10000;
+    point->y = code % 10000;
+}
+
+// TODO rename set position history or something
+static int get_unique_positions(const int **map, const TableSize *size, SetInt *move_history) {
     Point agent_position;
     get_agent_position(map, size, &agent_position);
     int distinct_positions = 0;
 
-    int *move_history = NULL;
     const int max_iterations = 100000;
 
     for (int i = 0; i < max_iterations; i++) {
         // store the current position if not already visited
-        const int code = agent_position.x * 10000 + agent_position.y;
-        distinct_positions += add_set_value(&move_history, distinct_positions, code);
+        const int code = encode_point(&agent_position);
+        distinct_positions += add_set_value(move_history, code);
 
         // move the agent
         const Point current_position = agent_position;
@@ -43,15 +51,17 @@ static int get_unique_positions(const int **map, const TableSize *size) {
 }
 
 void set_day06_answer(Answer2Parts *answer) {
-    // const char *path = "../day_06/day06_test.txt";
-    const char *path = "../day_06/day06.txt";
+    const char *path = "../day_06/day06_test.txt";
+    // const char *path = "../day_06/day06.txt";
 
     int **map_tmp = NULL;
     TableSize size = {0, 0};
     read_file_day06(path, &map_tmp, &size);
     const int **map = map_tmp;
 
-    answer->part_1 = get_unique_positions(map, &size);
+    SetInt *move_history = create_set();
+
+    answer->part_1 = get_unique_positions(map, &size, move_history);
     answer->part_2 = 0;
 
     if (map_tmp != NULL) {
@@ -60,5 +70,7 @@ void set_day06_answer(Answer2Parts *answer) {
                 free(map_tmp[i]);
             }
         }
+        free(map_tmp);
     }
+    free_set(move_history);
 }

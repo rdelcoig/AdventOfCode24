@@ -22,6 +22,10 @@ int main(void) {
     };
 
     void (*calls[days])(Answer2Parts *);
+    for (int i = 0; i < days; i++) {
+        calls[i] = NULL;
+    }
+
     calls[0] = set_day01_answer;
     calls[1] = set_day02_answer;
     calls[2] = set_day03_answer;
@@ -32,7 +36,12 @@ int main(void) {
     const int start = days - 6;
     for (int i = start; i < days; i++) {
         Answer2Parts answer;
-        calls[i](&answer);
+        if (calls[i] == NULL) {
+            answer.part_1 = -1;
+            answer.part_2 = -1;
+        } else {
+            calls[i](&answer);
+        }
 
         const int day = i + 1;
         printf("\nDay %02d results\n--------------\n", day);
