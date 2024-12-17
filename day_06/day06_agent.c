@@ -6,106 +6,73 @@
 #include <stdlib.h>
 
 #include "day06_agent.h"
-#include "day06_map.h"
 
-#define EMPTY_SPACE '.'
-#define OBSTRUCTION '#'
+int is_vertical(const PatrolAgent *agent) {
+    return agent->direction == AGENT_NORTH || agent->direction == AGENT_SOUTH;
+}
 
-static void get_direction(const char agent, Point *point) {
-    switch (agent) {
-        case '>':
+int is_horizontal(const PatrolAgent *agent) {
+    return agent->direction == AGENT_EAST || agent->direction == AGENT_WEST;
+}
+
+void get_direction(const PatrolAgent *agent, Point *point) {
+    switch (agent->direction) {
+        case AGENT_EAST:
             point->x = 1;
             point->y = 0;
             break;
-        case '<':
+        case AGENT_WEST:
             point->x = -1;
             point->y = 0;
             break;
-        case '^':
+        case AGENT_NORTH:
             point->x = 0;
             point->y = -1;
             break;
-        case 'v':
+        case AGENT_SOUTH:
             point->x = 0;
             point->y = 1;
             break;
         default:
-            printf("Invalid direction %c", agent);
+            printf("Invalid direction %c", agent->direction);
             exit(1);
     }
 }
 
-
-static int is_agent(const char c) {
-    return c == '>' || c == '<' || c == '^' || c == 'v';
-}
-
-static void rotate_agent(char *agent) {
-    switch (*agent) {
-        case '>':
-            *agent = 'v';
-            break;
-        case 'v':
-            *agent = '<';
-            break;
-        case '<':
-            *agent = '^';
-            break;
-        case '^':
-            *agent = '>';
-            break;
-        default:
-            printf("Invalid agent %c", *agent);
-            exit(1);
-    }
-}
-
-void get_agent_position(const int **map, const TableSize *size, Point *point) {
-    for (int y = 0; y < size->lines; y++) {
-        for (int x = 0; x < size->columns; x++) {
-            Point position = {x, y};
-            const char c = read_map(map, size, &position);
-            if (is_agent(c)) {
-                point->x = x;
-                point->y = y;
-                return;
-            }
-        }
-    }
-}
-
-int move_agent(int **map, const TableSize *size, const Point *current_position, Point *new_position) {
-    char agent = read_map(map, size, current_position);
+void set_next_step(const PatrolAgent *agent, Point *next_step) {
     Point direction;
     get_direction(agent, &direction);
+    *next_step = add_points(&agent->position, &direction);
+}
 
-    int safe = 0;
+inline int is_agent(const char c) {
+    return c == AGENT_EAST || c == AGENT_WEST || c == AGENT_NORTH || c == AGENT_SOUTH;
+}
 
-    for (int i = 0; i < 4; i++) {
-        new_position->x = current_position->x + direction.x;
-        new_position->y = current_position->y + direction.y;
-
-        if (is_out_of_bounds(size, new_position)) {
-            return 1;
-        }
-
-        const char c = read_map(map, size, new_position);
-        if (c == EMPTY_SPACE) {
-            safe = 1;
+void rotate_agent(PatrolAgent *agent) {
+    switch (agent->direction) {
+        case AGENT_EAST:
+            agent->direction = AGENT_SOUTH;
             break;
-        }
-
-        rotate_agent(&agent);
-        get_direction(agent, &direction);
+        case AGENT_SOUTH:
+            agent->direction = AGENT_WEST;
+            break;
+        case AGENT_WEST:
+            agent->direction = AGENT_NORTH;
+            break;
+        case AGENT_NORTH:
+            agent->direction = AGENT_EAST;
+            break;
+        default:
+            printf("Invalid agent %c", agent->direction);
+            exit(1);
     }
+}
 
-    if (!safe) {
-        printf("Agent %c is stuck {%d,%d}\n", agent, current_position->x, current_position->y);
-        exit(1);
-    }
-
-    write_in_map(map, size, current_position, EMPTY_SPACE);
-    write_in_map(map, size, new_position, agent);
-
-    return 0;
+int equals_agent(const PatrolAgent *left, const PatrolAgent *right) {
+    return (left == NULL && right == NULL)
+           || (left != NULL
+               && right != NULL
+               && (left->direction == right->direction
+                   && equals(&left->position, &right->position)));
 }

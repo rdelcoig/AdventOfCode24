@@ -7,8 +7,28 @@
 
 #include "../common/utils.h"
 
-void get_agent_position(const int **map, const TableSize *size, Point *point);
+#define AGENT_NORTH '^'
+#define AGENT_SOUTH 'v'
+#define AGENT_EAST '>'
+#define AGENT_WEST '<'
 
-int move_agent(int **map, const TableSize *size, const Point *current_position, Point *new_position);
+typedef struct {
+    Point position;
+    char direction;
+} PatrolAgent;
+
+int is_vertical(const PatrolAgent *agent);
+
+int is_horizontal(const PatrolAgent *agent);
+
+void get_direction(const PatrolAgent *agent, Point *point);
+
+void set_next_step(const PatrolAgent *agent, Point *next_step);
+
+int is_agent(const char c);
+
+void rotate_agent(PatrolAgent *agent);
+
+int equals_agent(const PatrolAgent *left, const PatrolAgent *right);
 
 #endif //DAY06_AGENT_H

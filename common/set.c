@@ -31,8 +31,11 @@ int add_set_value(SetInt *set, const int value) {
         return 0;
     }
 
-    if (!reallocate_int_array(&set->values, set->count + 1)) {
-        return 0;
+    if (set->capacity <= set->count) {
+        if (!reallocate_int_array(&set->values, set->count + 1)) {
+            return 0;
+        }
+        set->capacity++;
     }
 
     set->values[set->count] = value;
@@ -42,10 +45,21 @@ int add_set_value(SetInt *set, const int value) {
     return 1;
 }
 
+void clear_set(SetInt *set) {
+    if (set == NULL) {
+        return;
+    }
+    for (int i = 0; i < set->count; i++) {
+        set->values[i] = 0;
+    }
+    set->count = 0;
+}
+
 SetInt *create_set() {
     SetInt *set = malloc(sizeof(SetInt));
     set->values = NULL;
     set->count = 0;
+    set->capacity = 0;
     return set;
 }
 
@@ -58,5 +72,7 @@ void free_set(SetInt *set) {
         set->values = NULL;
     }
     set->count = 0;
+    set->capacity = 0;
     free(set);
+    set = NULL;
 }

@@ -26,6 +26,8 @@ typedef struct {
 
 Point add_points(const Point *point1, const Point *point2);
 
+void set_point(Point *receiving_point, const Point point_new_val);
+
 int is_out_of_bounds(const TableSize *size, const Point *point);
 
 int equals(const Point *left, const Point *right);

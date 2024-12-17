@@ -33,15 +33,14 @@ int main(void) {
     calls[4] = set_day05_answer;
     calls[5] = set_day06_answer;
 
-    const int start = days - 6;
+    const int start = days - 1;
     for (int i = start; i < days; i++) {
-        Answer2Parts answer;
         if (calls[i] == NULL) {
-            answer.part_1 = -1;
-            answer.part_2 = -1;
-        } else {
-            calls[i](&answer);
+            continue;
         }
+
+        Answer2Parts answer;
+        calls[i](&answer);
 
         const int day = i + 1;
         printf("\nDay %02d results\n--------------\n", day);

@@ -21,5 +21,6 @@ add_executable(AdventOfCode24
         day_05/day05.c
         day_06/day06_map.c
         day_06/day06_agent.c
+        day_06/day06_agent_map.c
         day_06/day06.c
 )

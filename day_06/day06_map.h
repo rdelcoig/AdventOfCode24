@@ -7,11 +7,22 @@
 
 #include "../common/utils.h"
 
+#define EMPTY_SPACE '.'
+#define OBSTRUCTION '#'
+
 char read_map(const int **map, const TableSize *size, const Point *point);
 
 void write_in_map(int **map, const TableSize *size, const Point *point, const char value);
 
 void print_map(const int **map, const TableSize *size);
+
+int **create_map(const TableSize *size);
+
+void copy_map(const int **map_from, int **map_to, const TableSize *size);
+
+int **clone_map(const int **map, const TableSize *size);
+
+void free_map(int ***map, const TableSize *size);
 
 void read_file_day06(const char *path, int ***map_ptr, TableSize *size);
 
