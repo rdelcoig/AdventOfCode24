@@ -18,7 +18,7 @@ int main(void) {
         {175615763, 74361272},
         {2358, 1737},
         {5268, 5799},
-        {5080, 0}
+        {5080, 1919}
     };
 
     void (*calls[days])(Answer2Parts *);
@@ -33,7 +33,7 @@ int main(void) {
     calls[4] = set_day05_answer;
     calls[5] = set_day06_answer;
 
-    const int start = days - 1;
+    const int start = days - 6;
     for (int i = start; i < days; i++) {
         if (calls[i] == NULL) {
             continue;

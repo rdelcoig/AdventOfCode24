@@ -6,6 +6,7 @@
 #define DAY06_AGENT_H
 
 #include "../common/utils.h"
+#include "../common/set.h"
 
 #define AGENT_NORTH '^'
 #define AGENT_SOUTH 'v'
@@ -30,5 +31,9 @@ int is_agent(const char c);
 void rotate_agent(PatrolAgent *agent);
 
 int equals_agent(const PatrolAgent *left, const PatrolAgent *right);
+
+int add_agent_to_set(SetInt *set, const PatrolAgent *agent);
+
+void retrieve_agent_from_set(const SetInt *set, const int index, PatrolAgent *agent);
 
 #endif //DAY06_AGENT_H

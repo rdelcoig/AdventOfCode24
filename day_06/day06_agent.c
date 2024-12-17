@@ -76,3 +76,27 @@ int equals_agent(const PatrolAgent *left, const PatrolAgent *right) {
                && (left->direction == right->direction
                    && equals(&left->position, &right->position)));
 }
+
+
+static int encode_agent(const PatrolAgent *agent) {
+    return (agent->position.x * 1000 + agent->position.y) * 1000 + (int) agent->direction;
+}
+
+static void decode_agent(const int code, PatrolAgent *agent) {
+    const int x = code / 1000000;
+    const int y = code / 1000 % 1000;
+    const char direction = (char) (code % 1000);
+    agent->position.x = x;
+    agent->position.y = y;
+    agent->direction = direction;
+}
+
+int add_agent_to_set(SetInt *set, const PatrolAgent *agent) {
+    const int code = encode_agent(agent);
+    return add_set_value(set, code);
+}
+
+void retrieve_agent_from_set(const SetInt *set, const int index, PatrolAgent *agent) {
+    const int code = set->values[index];
+    decode_agent(code, agent);
+}

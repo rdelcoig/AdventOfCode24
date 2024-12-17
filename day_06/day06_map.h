@@ -6,6 +6,7 @@
 #define DAY06_MAP_H
 
 #include "../common/utils.h"
+#include "../common/set.h"
 
 #define EMPTY_SPACE '.'
 #define OBSTRUCTION '#'
@@ -25,5 +26,11 @@ int **clone_map(const int **map, const TableSize *size);
 void free_map(int ***map, const TableSize *size);
 
 void read_file_day06(const char *path, int ***map_ptr, TableSize *size);
+
+int add_point_to_set(SetInt *set, const Point *point);
+
+void retrieve_point_from_set(const SetInt *set, const int index, Point *agent);
+
+void add_move_history(SetInt *move_history, const Point *from, const Point *to);
 
 #endif //DAY06_MAP_H

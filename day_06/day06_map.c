@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "day06_map.h"
+#include "day06_agent.h"
 
 char read_map(const int **map, const TableSize *size, const Point *point) {
     if (is_out_of_bounds(size, point)) {
@@ -113,8 +114,66 @@ void read_file_day06(const char *path, int ***map_ptr, TableSize *size) {
         lines_index++;
     }
 
-    //print_map(map, size);
-
     *map_ptr = map;
     fclose(file);
+}
+
+static int encode_point(const Point *point) {
+    return point->x * 10000 + point->y;
+}
+
+static void decode_point(const int code, Point *point) {
+    const int x = code / 10000;
+    const int y = code % 10000;
+    point->x = x;
+    point->y = y;
+}
+
+int add_point_to_set(SetInt *set, const Point *point) {
+    const int code = encode_point(point);
+    return add_set_value(set, code);
+}
+
+void retrieve_point_from_set(const SetInt *set, const int index, Point *agent) {
+    const int code = set->values[index];
+    decode_point(code, agent);
+}
+
+void add_move_history(SetInt *move_history, const Point *from, const Point *to) {
+    if (move_history == NULL) {
+        return;
+    }
+    if (from == NULL) {
+        return;
+    }
+    if (to == NULL) {
+        return;
+    }
+
+    Point from_position = *from;
+    if (from_position.x == to->x) {
+        if (from_position.y <= to->y) {
+            for (int y = from_position.y; y <= to->y; y++) {
+                from_position.y = y;
+                add_point_to_set(move_history, &from_position);
+            }
+        } else {
+            for (int y = from_position.y; y >= to->y; y--) {
+                from_position.y = y;
+                add_point_to_set(move_history, &from_position);
+            }
+        }
+    } else if (from_position.y == to->y) {
+        if (from_position.x <= to->x) {
+            for (int x = from_position.x; x <= to->x; x++) {
+                from_position.x = x;
+                add_point_to_set(move_history, &from_position);
+            }
+        } else {
+            for (int x = from_position.x; x >= to->x; x--) {
+                from_position.x = x;
+                add_point_to_set(move_history, &from_position);
+            }
+        }
+    }
 }
