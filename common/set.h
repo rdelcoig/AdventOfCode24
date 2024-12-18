@@ -13,14 +13,14 @@ typedef struct {
     size_t capacity;
 } SetInt;
 
-SetInt *create_set();
+SetInt *create_set_int();
 
-void free_set(SetInt *set);
+void free_set_int(SetInt *set);
 
-int contains_set_value(const SetInt *set, const int key, size_t *index);
+int contains_value_set_int(const SetInt *set, const int key, size_t *index);
 
-int add_set_value(SetInt *set, const int value);
+int add_value_set_int(SetInt *set, const int value);
 
-void clear_set(SetInt *set);
+void clear_set_int(SetInt *set);
 
 #endif //SET_H

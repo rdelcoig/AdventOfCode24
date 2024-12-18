@@ -131,7 +131,7 @@ static void decode_point(const int code, Point *point) {
 
 int add_point_to_set(SetInt *set, const Point *point) {
     const int code = encode_point(point);
-    return add_set_value(set, code);
+    return add_value_set_int(set, code);
 }
 
 void retrieve_point_from_set(const SetInt *set, const int index, Point *agent) {

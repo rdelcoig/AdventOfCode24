@@ -66,7 +66,7 @@ static int get_patrol_infinite_loops_count(const int **map, const TableSize *siz
     const Point start_position = start_agent.position;
 
     int **test_map = clone_map(map, size);
-    SetInt *agent_move_history = create_set();
+    SetInt *agent_move_history = create_set_int();
 
     int loop_count = 0;
     for (int round = 0; round < move_history->count; round++) {
@@ -86,7 +86,7 @@ static int get_patrol_infinite_loops_count(const int **map, const TableSize *siz
 
         set_unique_positions(test_map, size, NULL, agent_move_history, &infinity_loop);
 
-        clear_set(agent_move_history);
+        clear_set_int(agent_move_history);
 
         loop_count += infinity_loop;
 
@@ -95,7 +95,7 @@ static int get_patrol_infinite_loops_count(const int **map, const TableSize *siz
 
     free_map(&test_map, size);
     free_map(&test_map, size);
-    free_set(agent_move_history);
+    free_set_int(agent_move_history);
     return loop_count;
 }
 
@@ -109,7 +109,7 @@ void set_day06_answer(Answer2Parts *answer) {
 
     const int **map = clone_map(original_map, &size);
 
-    SetInt *move_history = create_set();
+    SetInt *move_history = create_set_int();
 
     set_unique_positions(map, &size, move_history, NULL, NULL);
 
@@ -126,5 +126,5 @@ void set_day06_answer(Answer2Parts *answer) {
 
     free_map(&map, &size);
     free_map(&original_map, &size);
-    free_set(move_history);
+    free_set_int(move_history);
 }

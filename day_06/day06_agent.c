@@ -93,7 +93,7 @@ static void decode_agent(const int code, PatrolAgent *agent) {
 
 int add_agent_to_set(SetInt *set, const PatrolAgent *agent) {
     const int code = encode_agent(agent);
-    return add_set_value(set, code);
+    return add_value_set_int(set, code);
 }
 
 void retrieve_agent_from_set(const SetInt *set, const int index, PatrolAgent *agent) {

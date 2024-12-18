@@ -8,13 +8,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define BASE_CAPACITY 4
+
 static int int_compare(const void *left, const void *right) {
     const int int_left = *(int *) left;
     const int int_right = *(int *) right;
     return COMPARE(int_left, int_right);
 }
 
-int contains_set_value(const SetInt *set, const int key, size_t *index) {
+int contains_value_set_int(const SetInt *set, const int key, size_t *index) {
     if (set == NULL || set->values == NULL) {
         return 0;
     }
@@ -26,16 +28,17 @@ int contains_set_value(const SetInt *set, const int key, size_t *index) {
     return value != NULL;
 }
 
-int add_set_value(SetInt *set, const int value) {
-    if (contains_set_value(set, value, NULL)) {
+int add_value_set_int(SetInt *set, const int value) {
+    if (contains_value_set_int(set, value, NULL)) {
         return 0;
     }
 
     if (set->capacity <= set->count) {
-        if (!reallocate_int_array(&set->values, set->count + 1)) {
+        const size_t new_capacity = set->capacity * 2;
+        if (!reallocate_int_array(&set->values, new_capacity)) {
             return 0;
         }
-        set->capacity++;
+        set->capacity = new_capacity;
     }
 
     set->values[set->count] = value;
@@ -45,7 +48,7 @@ int add_set_value(SetInt *set, const int value) {
     return 1;
 }
 
-void clear_set(SetInt *set) {
+void clear_set_int(SetInt *set) {
     if (set == NULL) {
         return;
     }
@@ -55,15 +58,15 @@ void clear_set(SetInt *set) {
     set->count = 0;
 }
 
-SetInt *create_set() {
+SetInt *create_set_int() {
     SetInt *set = malloc(sizeof(SetInt));
-    set->values = NULL;
+    set->capacity = BASE_CAPACITY;
+    set->values = malloc(BASE_CAPACITY * sizeof(int));
     set->count = 0;
-    set->capacity = 0;
     return set;
 }
 
-void free_set(SetInt *set) {
+void free_set_int(SetInt *set) {
     if (set == NULL) {
         return;
     }
