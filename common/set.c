@@ -34,11 +34,10 @@ int add_value_set_int(SetInt *set, const int value) {
     }
 
     if (set->capacity <= set->count) {
-        const size_t new_capacity = set->capacity * 2;
-        if (!reallocate_int_array(&set->values, new_capacity)) {
+        set->capacity *= 2;
+        if (!reallocate_int_array(&set->values, set->capacity)) {
             return 0;
         }
-        set->capacity = new_capacity;
     }
 
     set->values[set->count] = value;

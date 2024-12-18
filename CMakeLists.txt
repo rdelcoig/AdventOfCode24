@@ -23,4 +23,11 @@ add_executable(AdventOfCode24
         day_06/day06_agent.c
         day_06/day06_agent_map.c
         day_06/day06.c
+        day_07/day07.c
 )
+
+find_library(MATH_LIBRARY m)
+if (MATH_LIBRARY)
+    # mandatory for pow
+    target_link_libraries(AdventOfCode24 PUBLIC ${MATH_LIBRARY})
+endif ()

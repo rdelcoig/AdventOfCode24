@@ -8,9 +8,10 @@
 #include "day_04/day04.h"
 #include "day_05/day05.h"
 #include "day_06/day06.h"
+#include "day_07/day07.h"
 
 int main(void) {
-    const int days = 6;
+    const int days = 7;
 
     const Answer2Parts control_answers[] = {
         {1879048, 21024792},
@@ -18,7 +19,9 @@ int main(void) {
         {175615763, 74361272},
         {2358, 1737},
         {5268, 5799},
-        {5080, 1919}
+        {5080, 1919},
+        {5080, 1919},
+        {3749, 0}
     };
 
     void (*calls[days])(Answer2Parts *);
@@ -32,8 +35,9 @@ int main(void) {
     calls[3] = set_day04_answer;
     calls[4] = set_day05_answer;
     calls[5] = set_day06_answer;
+    calls[6] = set_day07_answer;
 
-    const int start = days - 6;
+    const int start = days - 1; // set n last answers to show here
     for (int i = start; i < days; i++) {
         if (calls[i] == NULL) {
             continue;
