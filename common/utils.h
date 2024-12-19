@@ -10,8 +10,8 @@
 #define COMPARE(l,r) ((l < r) ? -1 : (l > r))
 
 typedef struct {
-    int part_1;
-    int part_2;
+    unsigned long long int part_1;
+    unsigned long long int part_2;
 } Answer2Parts;
 
 typedef struct {

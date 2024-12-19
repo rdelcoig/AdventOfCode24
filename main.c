@@ -20,8 +20,7 @@ int main(void) {
         {2358, 1737},
         {5268, 5799},
         {5080, 1919},
-        {5080, 1919},
-        {3749, 0}
+        {2437272016585, 0}
     };
 
     void (*calls[days])(Answer2Parts *);
@@ -48,12 +47,12 @@ int main(void) {
 
         const int day = i + 1;
         printf("\nDay %02d results\n--------------\n", day);
-        printf("Part 1 : %d\n", answer.part_1);
-        printf("Part 2 : %d\n", answer.part_2);
+        printf("Part 1 : %llu\n", answer.part_1);
+        printf("Part 2 : %llu\n", answer.part_2);
 
         const Answer2Parts control = control_answers[i];
         if (answer.part_1 != control.part_1 || answer.part_2 != control.part_2) {
-            printf("TEST KO ! {%d, %d}\n", control.part_1, control.part_2);
+            printf("TEST KO ! {%llu, %llu}\n", control.part_1, control.part_2);
         }
     }
 
