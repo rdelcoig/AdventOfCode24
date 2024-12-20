@@ -71,10 +71,10 @@ static void read_file_day07(const char *path, Calibration **calib_ptr, int *cali
                     printf("Error add number\n");
                     exit(1);
                 }
-                if (calibration->root->value == 0) {
-                    calibration->root->value = (int) val;
-                } else {
-                    add_children_value(calibration, (int) val);
+                calibration->values[calibration->count++] = val;
+                if (calibration->count > CALIBRATION_MAX_SIZE) {
+                    printf("Error add number\n");
+                    exit(1);
                 }
                 i += l;
             }
@@ -98,17 +98,22 @@ void set_day07_answer(Answer2Parts *answer) {
 
     read_file_day07(path, calibrations, &calib_count);
 
-    unsigned long long total = 0;
+    unsigned long long total_1 = 0;
+    unsigned long long total_2 = 0;
     for (int i = 0; i < calib_count; i++) {
         const Calibration *current_calibration = calibrations[i];
-        const int is_valid = is_calibration_dual_valid(current_calibration);
+        int is_valid = is_valid_calibration_1(current_calibration);
         if (is_valid) {
-            total += current_calibration->total;
+            total_1 += current_calibration->total;
+        }
+        is_valid = is_valid_calibration_2(current_calibration);
+        if (is_valid) {
+            total_2 += current_calibration->total;
         }
     }
 
-    answer->part_1 = total;
-    answer->part_2 = 0;
+    answer->part_1 = total_1;
+    answer->part_2 = total_2;
 
     for (int i = 0; i < calib_count; i++) {
         free_calibration(&calibrations[i]);

@@ -5,25 +5,20 @@
 #ifndef DAY07_CALIBRATION_H
 #define DAY07_CALIBRATION_H
 
-struct calibration_node {
-    int value;
-    char operation[3];
-    struct calibration_node *add, *mul, *concat;
-};
-
-typedef struct calibration_node CalibrationNode;
+#define CALIBRATION_MAX_SIZE 15
 
 typedef struct {
     unsigned long long total;
-    CalibrationNode *root;
+    int count;
+    unsigned int values[CALIBRATION_MAX_SIZE];
 } Calibration;
 
 Calibration *create_calibration();
 
 void free_calibration(Calibration **calib);
 
-void add_children_value(const Calibration *calibration, const int value);
+int is_valid_calibration_1(const Calibration *calib);
 
-int is_calibration_dual_valid(const Calibration *calibration);
+int is_valid_calibration_2(const Calibration *calib);
 
 #endif //DAY07_CALIBRATION_H

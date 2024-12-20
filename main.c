@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <stdio.h>
 #include <time.h>
 
@@ -20,7 +21,7 @@ int main(void) {
         {2358, 1737},
         {5268, 5799},
         {5080, 1919},
-        {2437272016585, 0}
+        {2437272016585, 162987117690649}
     };
 
     void (*calls[days])(Answer2Parts *);
