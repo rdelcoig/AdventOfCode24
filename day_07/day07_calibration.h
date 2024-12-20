@@ -14,7 +14,7 @@ struct calibration_node {
 typedef struct calibration_node CalibrationNode;
 
 typedef struct {
-    unsigned long long int total;
+    unsigned long long total;
     CalibrationNode *root;
 } Calibration;
 

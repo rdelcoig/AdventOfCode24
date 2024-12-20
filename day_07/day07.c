@@ -10,11 +10,11 @@
 #include "day07.h"
 #include "day07_calibration.h"
 
-static unsigned long long int parse_next_long_long(const char *buffer, const int max_size, int *length) {
+static unsigned long long parse_next_long_long(const char *buffer, const int max_size, int *length) {
     int i = 0;
     char digits_buffer[max_size];
     memset(digits_buffer, 0, max_size);
-    unsigned long long int result = 0;
+    unsigned long long result = 0;
     while (isdigit(buffer[i]) && i < max_size) {
         digits_buffer[i] = buffer[i];
         result *= 10;
@@ -64,7 +64,7 @@ static void read_file_day07(const char *path, Calibration **calib_ptr, int *cali
             if (c == ' ') {
                 int l = 0;
                 const int offset = i + 1;
-                const unsigned long long int val = parse_next_long_long(buffer + offset, buffer_size - offset, &l);
+                const unsigned long long val = parse_next_long_long(buffer + offset, buffer_size - offset, &l);
                 if (val > INT_MAX) {
                     free_calibration(&calibration);
                     fclose(file);
@@ -98,7 +98,7 @@ void set_day07_answer(Answer2Parts *answer) {
 
     read_file_day07(path, calibrations, &calib_count);
 
-    unsigned long long int total = 0;
+    unsigned long long total = 0;
     for (int i = 0; i < calib_count; i++) {
         const Calibration *current_calibration = calibrations[i];
         const int is_valid = is_calibration_dual_valid(current_calibration);

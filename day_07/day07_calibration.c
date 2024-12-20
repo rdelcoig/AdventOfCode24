@@ -87,11 +87,11 @@ void free_calibration(Calibration **calib) {
     calib = NULL;
 }
 
-static unsigned long long int get_total_value_dual(const CalibrationNode *calibration_ptr, const int depth,
-                                                   const int mask) {
+static unsigned long long get_total_value_dual(const CalibrationNode *calibration_ptr, const unsigned short depth,
+                                               const unsigned short mask) {
     CalibrationNode current = *calibration_ptr;
-    unsigned long long int value = 0;
-    int mask_cmp = 1;
+    unsigned long long value = 0;
+    short mask_cmp = 1;
     for (int i = 1; i <= depth; i++) {
         if (strcmp(current.operation, "+") == 0) {
             value += current.value;
@@ -122,10 +122,10 @@ void add_children_value(const Calibration *calibration, const int value) {
 }
 
 int is_calibration_dual_valid(const Calibration *calibration) {
-    int depth = 1;
-    int mask = 2;
+    unsigned short depth = 1;
+    unsigned short mask = 2;
     CalibrationNode current = *calibration->root;
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 16; i++) {
         if (current.add == NULL) break;
         depth++;
         mask <<= 1;
@@ -134,7 +134,7 @@ int is_calibration_dual_valid(const Calibration *calibration) {
 
     current = *calibration->root;
     while (mask > 0) {
-        const unsigned long long int value = get_total_value_dual(&current, depth, mask);
+        const unsigned long long value = get_total_value_dual(&current, depth, mask);
         if (calibration->total == value) {
             return 1;
         }
