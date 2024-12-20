@@ -8,131 +8,7 @@
 #include <string.h>
 
 #include "day07.h"
-
-static CalibrationNodeDual *create_calibration_node() {
-    CalibrationNodeDual *node = malloc(sizeof(CalibrationNodeDual));
-    node->value = 0;
-    node->operation = 0;
-    node->add = node->mul = NULL;
-    return node;
-}
-
-static void free_calibration_node(CalibrationNodeDual **node) {
-    if (node == NULL) {
-        return;
-    }
-    if (*node == NULL) {
-        node = NULL;
-        return;
-    }
-
-    if ((*node)->add != NULL) {
-        free_calibration_node(&(*node)->add);
-    }
-    if ((*node)->mul != NULL) {
-        free_calibration_node(&(*node)->mul);
-    }
-    free(*node);
-    node = NULL;
-}
-
-static void add_child_node_value(CalibrationNodeDual **node, const int value, const char operation) {
-    CalibrationNodeDual *node_tmp = create_calibration_node();
-    node_tmp->value = value;
-    node_tmp->operation = operation;
-    node_tmp->add = NULL;
-    node_tmp->mul = NULL;
-    *node = node_tmp;
-}
-
-static void add_children(CalibrationNodeDual *node, const int value) {
-    if (node->add != NULL) {
-        add_children(node->add, value);
-    }
-
-    if (node->mul != NULL) {
-        add_children(node->mul, value);
-    }
-
-    if (node->add == NULL) {
-        add_child_node_value(&node->add, value, '+');
-    }
-
-    if (node->mul == NULL) {
-        add_child_node_value(&node->mul, value, '*');
-    }
-}
-
-static Calibration *create_calibration() {
-    Calibration *calib = malloc(sizeof(Calibration));
-    calib->total = 0;
-    calib->root = NULL;
-    return calib;
-}
-
-static void free_calibration(Calibration **calib) {
-    if (*calib == NULL) {
-        calib = NULL;
-        return;
-    }
-    if ((*calib)->root != NULL) {
-        free_calibration_node(&(*calib)->root);
-    }
-    free(*calib);
-    calib = NULL;
-}
-
-static unsigned long long int get_total_value(const CalibrationNodeDual *calibration_ptr, const int depth,
-                                              const int mask) {
-    CalibrationNodeDual current = *calibration_ptr;
-    unsigned long long int value = 0;
-    int mask_cmp = 1;
-    for (int i = 1; i <= depth; i++) {
-        if (current.operation == '+') {
-            value += current.value;
-        } else if (current.operation == '*') {
-            value *= current.value;
-        } else {
-            value = current.value;
-        }
-
-        if ((mask & mask_cmp) == 0) {
-            if (current.add == NULL) {
-                break;
-            }
-            current = *current.add;
-        } else {
-            if (current.mul == NULL) {
-                break;
-            }
-            current = *current.mul;
-        }
-        mask_cmp <<= 1;
-    }
-    return value;
-}
-
-static int is_calibration_valid(const Calibration *calibration) {
-    int depth = 1;
-    int mask = 2;
-    CalibrationNodeDual current = *calibration->root;
-    for (int i = 0; i < 100; i++) {
-        if (current.add == NULL) break;
-        depth++;
-        mask <<= 1;
-        current = *current.add;
-    }
-
-    current = *calibration->root;
-    while (mask > 0) {
-        unsigned long long int value = get_total_value(&current, depth, mask);
-        if (calibration->total == value) {
-            return 1;
-        }
-        mask--;
-    }
-    return 0;
-}
+#include "day07_calibration.h"
 
 static unsigned long long int parse_next_long_long(const char *buffer, const int max_size, int *length) {
     int i = 0;
@@ -195,11 +71,10 @@ static void read_file_day07(const char *path, Calibration **calib_ptr, int *cali
                     printf("Error add number\n");
                     exit(1);
                 }
-                if (calibration->root == NULL) {
-                    calibration->root = create_calibration_node();
+                if (calibration->root->value == 0) {
                     calibration->root->value = (int) val;
                 } else {
-                    add_children(calibration->root, (int) val);
+                    add_children_value(calibration, (int) val);
                 }
                 i += l;
             }
@@ -218,8 +93,8 @@ void set_day07_answer(Answer2Parts *answer) {
     memset(calibrations, 0, size * sizeof(Calibration *));
     int calib_count = 0;
 
-    const char *path = "../day_07/day07_test.txt";
-    // const char *path = "../day_07/day07.txt";
+    // const char *path = "../day_07/day07_test.txt";
+    const char *path = "../day_07/day07.txt";
 
     read_file_day07(path, calibrations, &calib_count);
 
@@ -232,7 +107,7 @@ void set_day07_answer(Answer2Parts *answer) {
         }
     }
 
-    answer->part_1 = 2437272016585;
+    answer->part_1 = total;
     answer->part_2 = 0;
 
     for (int i = 0; i < calib_count; i++) {
