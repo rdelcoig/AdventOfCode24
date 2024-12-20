@@ -6,14 +6,15 @@
 #include <ctype.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "day07_calibration.h"
 
 static CalibrationNode *create_calibration_node() {
     CalibrationNode *node = malloc(sizeof(CalibrationNode));
     node->value = 0;
-    node->operation = 0;
-    node->add = node->mul = NULL;
+    memset(node->operation, 0, 3);
+    node->add = node->mul = node->concat = NULL;
     return node;
 }
 
@@ -32,34 +33,38 @@ static void free_calibration_node(CalibrationNode **node) {
     if ((*node)->mul != NULL) {
         free_calibration_node(&(*node)->mul);
     }
+    if ((*node)->concat != NULL) {
+        free_calibration_node(&(*node)->concat);
+    }
     free(*node);
     node = NULL;
 }
 
-static void add_child_node_value(CalibrationNode **node, const int value, const char operation) {
+static void add_child_node_value(CalibrationNode **node, const int value, const char *operation) {
     CalibrationNode *node_tmp = create_calibration_node();
     node_tmp->value = value;
-    node_tmp->operation = operation;
-    node_tmp->add = NULL;
-    node_tmp->mul = NULL;
+    strncpy(node_tmp->operation, operation, 2);
+    node_tmp->add = node_tmp->mul = node_tmp->concat = NULL;
     *node = node_tmp;
 }
 
 static void add_children(CalibrationNode *node, const int value) {
-    if (node->add != NULL) {
+    if (node->add == NULL) {
+        add_child_node_value(&node->add, value, "+");
+    } else {
         add_children(node->add, value);
     }
 
-    if (node->mul != NULL) {
+    if (node->mul == NULL) {
+        add_child_node_value(&node->mul, value, "*");
+    } else {
         add_children(node->mul, value);
     }
 
-    if (node->add == NULL) {
-        add_child_node_value(&node->add, value, '+');
-    }
-
-    if (node->mul == NULL) {
-        add_child_node_value(&node->mul, value, '*');
+    if (node->concat == NULL) {
+        add_child_node_value(&node->concat, value, "||");
+    } else {
+        add_children(node->concat, value);
     }
 }
 
@@ -82,15 +87,15 @@ void free_calibration(Calibration **calib) {
     calib = NULL;
 }
 
-static unsigned long long int get_total_value(const CalibrationNode *calibration_ptr, const int depth,
-                                              const int mask) {
+static unsigned long long int get_total_value_dual(const CalibrationNode *calibration_ptr, const int depth,
+                                                   const int mask) {
     CalibrationNode current = *calibration_ptr;
     unsigned long long int value = 0;
     int mask_cmp = 1;
     for (int i = 1; i <= depth; i++) {
-        if (current.operation == '+') {
+        if (strcmp(current.operation, "+") == 0) {
             value += current.value;
-        } else if (current.operation == '*') {
+        } else if (strcmp(current.operation, "*") == 0) {
             value *= current.value;
         } else {
             value = current.value;
@@ -116,7 +121,7 @@ void add_children_value(const Calibration *calibration, const int value) {
     add_children(calibration->root, value);
 }
 
-int is_calibration_valid(const Calibration *calibration) {
+int is_calibration_dual_valid(const Calibration *calibration) {
     int depth = 1;
     int mask = 2;
     CalibrationNode current = *calibration->root;
@@ -129,7 +134,7 @@ int is_calibration_valid(const Calibration *calibration) {
 
     current = *calibration->root;
     while (mask > 0) {
-        unsigned long long int value = get_total_value(&current, depth, mask);
+        const unsigned long long int value = get_total_value_dual(&current, depth, mask);
         if (calibration->total == value) {
             return 1;
         }
@@ -137,4 +142,3 @@ int is_calibration_valid(const Calibration *calibration) {
     }
     return 0;
 }
-

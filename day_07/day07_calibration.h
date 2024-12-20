@@ -7,8 +7,8 @@
 
 struct calibration_node {
     int value;
-    char operation;
-    struct calibration_node *add, *mul;
+    char operation[3];
+    struct calibration_node *add, *mul, *concat;
 };
 
 typedef struct calibration_node CalibrationNode;
@@ -24,6 +24,6 @@ void free_calibration(Calibration **calib);
 
 void add_children_value(const Calibration *calibration, const int value);
 
-int is_calibration_valid(const Calibration *calibration);
+int is_calibration_dual_valid(const Calibration *calibration);
 
 #endif //DAY07_CALIBRATION_H

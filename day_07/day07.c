@@ -101,7 +101,7 @@ void set_day07_answer(Answer2Parts *answer) {
     unsigned long long int total = 0;
     for (int i = 0; i < calib_count; i++) {
         const Calibration *current_calibration = calibrations[i];
-        const int is_valid = is_calibration_valid(current_calibration);
+        const int is_valid = is_calibration_dual_valid(current_calibration);
         if (is_valid) {
             total += current_calibration->total;
         }
