@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "day07.h"
 #include "day07_calibration.h"

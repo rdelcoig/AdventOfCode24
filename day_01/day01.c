@@ -10,6 +10,11 @@
 
 #define ARRAY_SIZE 1000
 
+typedef struct {
+    int left_array[ARRAY_SIZE];
+    int right_array[ARRAY_SIZE];
+} Day01Data;
+
 /**
  * Compare function for quick sort
  */
@@ -22,23 +27,12 @@ static int compare(const void *left, const void *right) {
 /**
  * Read day 01 file and store left and right columns in corresponding arrays
  */
-static void read_file_day01(int *left_array, int *right_array) {
-    FILE *file = fopen("../day_01/day01.txt", "r");
-
-    if (file == NULL) {
-        perror("Failed to open the file");
-    }
-
+static void process_file_day01(FILE *file, Day01Data *data) {
     int i = 0;
 
-    while (fscanf(file, "%d   %d", &left_array[i], &right_array[i]) == 2 && i < ARRAY_SIZE) {
+    while (fscanf(file, "%d   %d", &data->left_array[i], &data->right_array[i]) == 2 && i < ARRAY_SIZE) {
         i++;
     }
-
-    fclose(file);
-
-    qsort(left_array, ARRAY_SIZE, sizeof(int), compare);
-    qsort(right_array, ARRAY_SIZE, sizeof(int), compare);
 }
 
 static int get_day01_part1_answer(const int *left_array, const int *right_array) {
@@ -75,21 +69,21 @@ static int get_day02_part2_answer(const int *left_array, const int *right_array)
 void set_day01_answer(Answer2Parts *answer) {
     const ulong mem_size = ARRAY_SIZE * sizeof(int);
 
-    int *left_array_1 = malloc(mem_size);
-    int *right_array_1 = malloc(mem_size);
+    Day01Data data;
+    read_file("../day_01/day01.txt", &data, process_file_day01);
 
-    read_file_day01(left_array_1, right_array_1);
+    qsort(data.left_array, ARRAY_SIZE, sizeof(int), compare);
+    qsort(data.right_array, ARRAY_SIZE, sizeof(int), compare);
 
-    int *left_array_2 = malloc(mem_size);
-    int *right_array_2 = malloc(mem_size);
-    memcpy(left_array_2, left_array_1, mem_size);
-    memcpy(right_array_2, right_array_1, mem_size);
+    int left_array[ARRAY_SIZE];
+    int right_array[ARRAY_SIZE];
+    memcpy(left_array, data.left_array, mem_size);
+    memcpy(right_array, data.right_array, mem_size);
 
-    answer->part_1 = get_day01_part1_answer(left_array_1, right_array_1);
-    answer->part_2 = get_day02_part2_answer(left_array_2, right_array_2);
+    answer->part_1 = get_day01_part1_answer(left_array, right_array);
 
-    free(left_array_1);
-    free(right_array_1);
-    free(left_array_2);
-    free(right_array_2);
+    memcpy(left_array, data.left_array, mem_size);
+    memcpy(right_array, data.right_array, mem_size);
+
+    answer->part_2 = get_day02_part2_answer(left_array, right_array);
 }

@@ -17,13 +17,7 @@
 /**
  * Read file & store to jagged array
  */
-static void read_file_day02(int **reports) {
-    FILE *file = fopen("../day_02/day02.txt", "r");
-
-    if (file == NULL) {
-        perror("Failed to open the file");
-    }
-
+static void process_file_day02(FILE *file, int **reports) {
     int report_index = 0;
 
     // read all reports
@@ -61,8 +55,6 @@ static void read_file_day02(int **reports) {
             }
         }
     }
-
-    fclose(file);
 }
 
 /**
@@ -181,13 +173,15 @@ void set_day02_answer(Answer2Parts *answer) {
     for (int i = 0; i < REPORTS_COUNT; i++) {
         reports[i] = calloc(MAX_LEVELS, sizeof(int));
     }
-    read_file_day02(reports);
+
+    read_file("../day_02/day02.txt", reports, process_file_day02);
 
     answer->part_1 = get_day02_part1_answer(reports);
     answer->part_2 = get_day02_part2_answer(reports);
 
     for (int i = 0; i < REPORTS_COUNT; i++) {
-        free(reports[i]);
+        if (reports[i] != NULL)
+            free(reports[i]);
     }
     free(reports);
 }

@@ -105,7 +105,8 @@ void read_file_day06(const char *path, int ***map_ptr, TableSize *size) {
     int **map = create_map(size);
 
     // read again to fill the array
-    fseek(file, 0, SEEK_SET);
+    rewind(file);
+
     int lines_index = 0;
     while (fgets(buffer, size_buffer, file)) {
         for (int columns_index = 0; columns_index < size->columns; columns_index++) {

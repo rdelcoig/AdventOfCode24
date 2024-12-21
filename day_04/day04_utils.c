@@ -8,18 +8,19 @@
 
 #include "day04_utils.h"
 
-void read_file_day04(const char *path, const TableSize *size, char **raw_data) {
-    FILE *file = fopen(path, "r");
+typedef struct {
+    const TableSize *size;
+    char **raw_data;
+} Day04Data;
 
+static void process_file_day04(FILE *file, Day04Data *data) {
     int i = 0;
     const int size_buffer = 200;
     char line[size_buffer];
-    while (fgets(line, size_buffer, file) != NULL && i < size->lines) {
-        strncpy(raw_data[i], line, size->columns);
+    while (fgets(line, size_buffer, file) != NULL && i < data->size->lines) {
+        strncpy(data->raw_data[i], line, data->size->columns);
         i++;
     }
-
-    fclose(file);
 }
 
 int read_file_day04_and_return_answer(const char *file_path, const TableSize *size,
@@ -29,7 +30,12 @@ int read_file_day04_and_return_answer(const char *file_path, const TableSize *si
         lines[i] = calloc(size->columns + 1, sizeof(char));
     }
 
-    read_file_day04(file_path, size, lines);
+    Day04Data data = {
+        size,
+        lines
+    };
+    read_file(file_path, &data, process_file_day04);
+
     const int total = get_total(lines, size);
 
     for (int i = 0; i < size->lines; i++)

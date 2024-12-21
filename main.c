@@ -37,7 +37,7 @@ int main(void) {
     calls[5] = set_day06_answer;
     calls[6] = set_day07_answer;
 
-    const int start = days - 1; // set n last answers to show here
+    const int start = days - days; // set n last answers to show here
     for (int i = start; i < days; i++) {
         if (calls[i] == NULL) {
             continue;

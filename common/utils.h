@@ -5,7 +5,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <stdlib.h>
+#include <stdio.h>
 
 #define COMPARE(l,r) ((l < r) ? -1 : (l > r))
 
@@ -33,5 +33,7 @@ int is_out_of_bounds(const TableSize *size, const Point *point);
 int equals(const Point *left, const Point *right);
 
 int reallocate_int_array(int **array_ptr, size_t new_count);
+
+void read_file(const char *path, void *data, void (*process_file_ptr)(FILE *, void *));
 
 #endif //UTILS_H
