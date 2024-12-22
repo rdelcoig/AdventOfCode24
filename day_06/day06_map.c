@@ -82,42 +82,33 @@ void free_map(int ***map, const TableSize *size) {
     map = NULL;
 }
 
-void read_file_day06(const char *path, int ***map_ptr, TableSize *size) {
-    FILE *file = fopen(path, "r");
-
-    if (file == NULL) {
-        perror("File not found");
-        exit(1);
-    }
-
-    size->lines = 0;
-    size->columns = 0;
+void process_file_day06(FILE *file, Day06Data *data) {
+    data->size.lines = 0;
+    data->size.columns = 0;
 
     // read a 1st time to get size
     const int size_buffer = 1024;
     char buffer[size_buffer];
     while (fgets(buffer, size_buffer, file)) {
-        size->lines++;
-        size->columns = (int) strlen(buffer);
+        data->size.lines++;
+        data->size.columns = (int) strlen(buffer);
     }
 
     // init 2D array
-    int **map = create_map(size);
+    data->map = create_map(&data->size);
 
     // read again to fill the array
     rewind(file);
 
     int lines_index = 0;
     while (fgets(buffer, size_buffer, file)) {
-        for (int columns_index = 0; columns_index < size->columns; columns_index++) {
-            map[lines_index][columns_index] = (int) buffer[columns_index];
+        for (int columns_index = 0; columns_index < data->size.columns; columns_index++) {
+            data->map[lines_index][columns_index] = (int) buffer[columns_index];
         }
         lines_index++;
     }
-
-    *map_ptr = map;
-    fclose(file);
 }
+
 
 static int encode_point(const Point *point) {
     return point->x * 10000 + point->y;

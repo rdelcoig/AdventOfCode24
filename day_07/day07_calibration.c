@@ -23,7 +23,6 @@ void free_calibration(Calibration **calib) {
         calib = NULL;
         return;
     }
-    memset((*calib)->values, 0, sizeof(unsigned int) * CALIBRATION_MAX_SIZE);
     free(*calib);
     calib = NULL;
 }

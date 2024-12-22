@@ -143,23 +143,21 @@ int reallocate_updates_line(int **updates_line, const int updates_count) {
     return 1;
 }
 
-void read_file_day05(const char *path, PageRule **rules, int *rules_count,
-                     int ***updates, int *updates_count) {
-    FILE *file = fopen(path, "r");
-
+void process_file_day05(FILE *file, Day05Data *data) {
     int i = 0;
 
-    const int left, right;
+    int left, right;
     while (fscanf(file, "%d|%d\n", &left, &right) == 2) {
         const PageRule pr = {left, right};
-        if (!reallocate_rules(rules, i + 1)) {
+        if (!reallocate_rules(&data->rules, i + 1)) {
             perror("Reallocate rules error");
             exit(1);
         }
-        (*rules)[i++] = pr;
+        data->rules[i++] = pr;
     }
-    *rules_count = i;
+    data->rules_count = i;
 
+    // go back 2 chars because of last fscanf
     fseek(file, -2, SEEK_CUR);
 
     i = 0;
@@ -188,14 +186,12 @@ void read_file_day05(const char *path, PageRule **rules, int *rules_count,
         }
         updates_line[j] = -1;
 
-        if (!reallocate_updates(updates, i + 1)) {
+        if (!reallocate_updates(&data->updates, i + 1)) {
             perror("Reallocate updates error");
             exit(1);
         }
 
-        (*updates)[i++] = updates_line;
+        data->updates[i++] = updates_line;
     }
-    *updates_count = i;
-
-    fclose(file);
+    data->updates_count = i;
 }

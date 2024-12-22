@@ -65,7 +65,7 @@ static void reorder_updates(int ***unordered_updates, const int updates_count,
                             PageRule *rules, const int rules_count) {
     // for each line
     for (int i = 0; i < updates_count; i++) {
-        const int *updates_line = (*unordered_updates)[i];
+        int *updates_line = (*unordered_updates)[i];
         if (updates_line == NULL) {
             break;
         }
@@ -111,35 +111,32 @@ void set_day05_answer(Answer2Parts *answer) {
     //const char *path = "../day_05/day05_test.txt";
     const char *path = "../day_05/day05.txt";
 
-    int rules_count, updates_count;
-    PageRule *rules = NULL;
-    int **updates = NULL;
+    Day05Data data = {NULL, 0,NULL, 0};
+    read_file(path, &data, process_file_day05);
 
-    read_file_day05(path, &rules, &rules_count, &updates, &updates_count);
-
-    qsort(rules, rules_count, sizeof(PageRule), rules_compare);
+    qsort(data.rules, data.rules_count, sizeof(PageRule), rules_compare);
 
     int **correct_updates = NULL;
     int **incorrect_updates = NULL;
     int correct_updates_count, incorrect_updates_count;
 
-    separate_updates(&updates, updates_count, &rules, rules_count,
+    separate_updates(&data.updates, data.updates_count, &data.rules, data.rules_count,
                      &correct_updates, &correct_updates_count,
                      &incorrect_updates, &incorrect_updates_count);
 
-    reorder_updates(&incorrect_updates, incorrect_updates_count, rules, rules_count);
+    reorder_updates(&incorrect_updates, incorrect_updates_count, data.rules, data.rules_count);
 
     answer->part_1 = get_day05_total(correct_updates, correct_updates_count);
     answer->part_2 = get_day05_total(incorrect_updates, incorrect_updates_count);
 
-    if (updates != NULL) {
-        for (int i = 0; i < updates_count; i++) {
-            int *current = updates[i];
+    if (data.updates != NULL) {
+        for (int i = 0; i < data.updates_count; i++) {
+            int *current = data.updates[i];
             if (current != NULL) {
                 free(current);
             }
         }
-        free(updates);
+        free(data.updates);
     }
 
     if (correct_updates != NULL) {
@@ -152,7 +149,7 @@ void set_day05_answer(Answer2Parts *answer) {
         free(incorrect_updates);
     }
 
-    if (rules != NULL) {
-        free(rules);
+    if (data.rules != NULL) {
+        free(data.rules);
     }
 }

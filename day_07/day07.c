@@ -11,6 +11,11 @@
 #include "day07.h"
 #include "day07_calibration.h"
 
+typedef struct {
+    Calibration **calibrations;
+    int calibrations_count;
+} Day07Data;
+
 static unsigned long long parse_next_long_long(const char *buffer, const int max_size, int *length) {
     int i = 0;
     char digits_buffer[max_size];
@@ -27,15 +32,8 @@ static unsigned long long parse_next_long_long(const char *buffer, const int max
     return result;
 }
 
-static void read_file_day07(const char *path, Calibration **calib_ptr, int *calib_count) {
-    FILE *file = fopen(path, "r");
-
-    if (file == NULL) {
-        printf("Error: file not found\n");
-        exit(1);
-    }
-
-    *calib_count = 0;
+static void process_file_day07(FILE *file, Day07Data *data) {
+    data->calibrations_count = 0;
 
     const int buffer_size = 50;
     char buffer[buffer_size];
@@ -81,27 +79,24 @@ static void read_file_day07(const char *path, Calibration **calib_ptr, int *cali
             }
         }
 
-        calib_ptr[*calib_count] = calibration;
-        (*calib_count)++;
+        data->calibrations[data->calibrations_count++] = calibration;
     }
-
-    fclose(file);
 }
 
 void set_day07_answer(Answer2Parts *answer) {
     const int size = 1000;
     Calibration *calibrations[size];
     memset(calibrations, 0, size * sizeof(Calibration *));
-    int calib_count = 0;
 
     // const char *path = "../day_07/day07_test.txt";
     const char *path = "../day_07/day07.txt";
 
-    read_file_day07(path, calibrations, &calib_count);
+    Day07Data data = {calibrations, 0};
+    read_file(path, &data, process_file_day07);
 
     unsigned long long total_1 = 0;
     unsigned long long total_2 = 0;
-    for (int i = 0; i < calib_count; i++) {
+    for (int i = 0; i < data.calibrations_count; i++) {
         const Calibration *current_calibration = calibrations[i];
         int is_valid = is_valid_calibration_1(current_calibration);
         if (is_valid) {
@@ -116,7 +111,7 @@ void set_day07_answer(Answer2Parts *answer) {
     answer->part_1 = total_1;
     answer->part_2 = total_2;
 
-    for (int i = 0; i < calib_count; i++) {
+    for (int i = 0; i < data.calibrations_count; i++) {
         free_calibration(&calibrations[i]);
     }
 }

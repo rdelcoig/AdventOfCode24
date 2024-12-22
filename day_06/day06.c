@@ -103,15 +103,14 @@ void set_day06_answer(Answer2Parts *answer) {
     // const char *path = "../day_06/day06_test.txt";
     const char *path = "../day_06/day06.txt";
 
-    int **original_map = NULL;
-    TableSize size = {0, 0};
-    read_file_day06(path, &original_map, &size);
+    Day06Data data = {NULL, {0, 0}};
+    read_file(path, &data, process_file_day06);
 
-    const int **map = clone_map(original_map, &size);
+    const int **map = clone_map(data.map, &data.size);
 
     SetInt *move_history = create_set_int();
 
-    set_unique_positions(map, &size, move_history, NULL, NULL);
+    set_unique_positions(map, &data.size, move_history, NULL, NULL);
 
     if (move_history->count > INT_MAX) {
         printf("Too many moves\n");
@@ -119,12 +118,12 @@ void set_day06_answer(Answer2Parts *answer) {
         answer->part_1 = (int) move_history->count;
 
         // reset map
-        copy_map(original_map, map, &size);
+        copy_map(data.map, map, &data.size);
 
-        answer->part_2 = get_patrol_infinite_loops_count(map, &size, move_history);
+        answer->part_2 = get_patrol_infinite_loops_count(map, &data.size, move_history);
     }
 
-    free_map(&map, &size);
-    free_map(&original_map, &size);
+    free_map(&map, &data.size);
+    free_map(&data.map, &data.size);
     free_set_int(move_history);
 }
