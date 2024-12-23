@@ -11,7 +11,7 @@
 static int has_next_matching(char **table, const TableSize *size, const Point *current, const Point *direction) {
     Point next = *current;
     const char *next_chars = "MAS";
-    for (int i = 0; i < strlen(next_chars); i++) {
+    for (size_t i = 0; i < strlen(next_chars); i++) {
         const Point next_tmp = add_points(&next, direction);
         next = next_tmp;
 
@@ -42,7 +42,7 @@ static int get_total_around(char **table, const TableSize *size, const Point *cu
     const unsigned long directions_size = sizeof(directions) / sizeof(directions[0]);
 
     int total = 0;
-    for (int i = 0; i < directions_size; i++) {
+    for (size_t i = 0; i < directions_size; i++) {
         const Point direction = directions[i];
         total += has_next_matching(table, size, current, &direction);
     }
@@ -51,8 +51,8 @@ static int get_total_around(char **table, const TableSize *size, const Point *cu
 
 static int get_total(char **table, const TableSize *size) {
     int total = 0;
-    for (int y = 0; y < size->lines; y++) {
-        for (int x = 0; x < size->columns; x++) {
+    for (size_t y = 0; y < size->lines; y++) {
+        for (size_t x = 0; x < size->columns; x++) {
             Point current_position = {x, y};
             const char current = get_value_at_point(table, size, &current_position);
             if (current == 'X') {

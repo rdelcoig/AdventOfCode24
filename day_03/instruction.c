@@ -20,7 +20,7 @@ struct parse_match {
 
 static int get_operand(const char *instruction_to_parse, const int start, const int end) {
     const int operand_size = end - start;
-    char *operand_str[operand_size + 1];
+    char operand_str[operand_size + 1];
     memset(operand_str, 0, operand_size + 1);
     strncpy(operand_str, instruction_to_parse + start, operand_size);
     return atoi(operand_str);

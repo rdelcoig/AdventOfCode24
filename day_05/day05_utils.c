@@ -29,7 +29,7 @@ static int add_value_to_array(int **array, const int array_size, const int value
 static void filter_rules_by_before(const int page, const PageRule **rules, const int rules_count, int **pages_after) {
     int pages_after_count = 0;
 
-    for (int i = 0; i < rules_count; i++) {
+    for (size_t i = 0; i < rules_count; i++) {
         const PageRule current = (*rules)[i];
 
         if (current.before == page) {
@@ -67,7 +67,7 @@ int is_day05_update_correct(const int *updates_line, const PageRule **rules, con
         int *pages_after = NULL;
         filter_rules_by_before(current_page, rules, rules_count, &pages_after);
 
-        for (int i = 0; i < rules_count; i++) {
+        for (size_t i = 0; i < rules_count; i++) {
             const int current_page_after = *(pages_after + i);
             if (current_page_after <= -1) {
                 break;
@@ -99,7 +99,7 @@ int is_day05_update_correct(const int *updates_line, const PageRule **rules, con
 
 int get_day05_total(const int **updates, const int updates_count) {
     int total = 0;
-    for (int i = 0; i < updates_count; i++) {
+    for (size_t i = 0; i < updates_count; i++) {
         const int *current = updates[i];
 
         if (current == NULL) {
@@ -143,7 +143,8 @@ int reallocate_updates_line(int **updates_line, const int updates_count) {
     return 1;
 }
 
-void process_file_day05(FILE *file, Day05Data *data) {
+void process_file_day05(FILE *file, void *data_ptr) {
+    Day05Data *data = (void *) data_ptr;
     int i = 0;
 
     int left, right;

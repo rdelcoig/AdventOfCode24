@@ -32,7 +32,8 @@ static unsigned long long parse_next_long_long(const char *buffer, const int max
     return result;
 }
 
-static void process_file_day07(FILE *file, Day07Data *data) {
+static void process_file_day07(FILE *file, void *data_ptr) {
+    Day07Data *data = (void *) data_ptr;
     data->calibrations_count = 0;
 
     const int buffer_size = 50;
@@ -47,7 +48,7 @@ static void process_file_day07(FILE *file, Day07Data *data) {
 
         Calibration *calibration = create_calibration();
 
-        for (int i = 0; i < buffer_size; i++) {
+        for (size_t i = 0; i < buffer_size; i++) {
             const char c = buffer[i];
             if (c == '\n' || c == '\0') {
                 break;
@@ -96,7 +97,7 @@ void set_day07_answer(Answer2Parts *answer) {
 
     unsigned long long total_1 = 0;
     unsigned long long total_2 = 0;
-    for (int i = 0; i < data.calibrations_count; i++) {
+    for (size_t i = 0; i < data.calibrations_count; i++) {
         const Calibration *current_calibration = calibrations[i];
         int is_valid = is_valid_calibration_1(current_calibration);
         if (is_valid) {
@@ -111,7 +112,7 @@ void set_day07_answer(Answer2Parts *answer) {
     answer->part_1 = total_1;
     answer->part_2 = total_2;
 
-    for (int i = 0; i < data.calibrations_count; i++) {
+    for (size_t i = 0; i < data.calibrations_count; i++) {
         free_calibration(&calibrations[i]);
     }
 }

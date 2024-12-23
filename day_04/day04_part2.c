@@ -46,7 +46,7 @@ static int has_cross(char **table, const TableSize *size, const Point *current) 
 
     const unsigned long upper_corners_size = sizeof(upper_corners) / sizeof(upper_corners[0]);
 
-    for (int i = 0; i < upper_corners_size; i++) {
+    for (size_t i = 0; i < upper_corners_size; i++) {
         const Point corner = upper_corners[i];
         if (!has_word(table, size, current, &corner)) {
             return 0;
@@ -57,8 +57,8 @@ static int has_cross(char **table, const TableSize *size, const Point *current) 
 
 static int get_total(char **table, const TableSize *size) {
     int total = 0;
-    for (int y = 0; y < size->lines; y++) {
-        for (int x = 0; x < size->columns; x++) {
+    for (size_t y = 0; y < size->lines; y++) {
+        for (size_t x = 0; x < size->columns; x++) {
             const char current = table[y][x];
             if (current == 'A') {
                 Point current_position = {x, y};

@@ -51,7 +51,7 @@ void clear_set_int(SetInt *set) {
     if (set == NULL) {
         return;
     }
-    for (int i = 0; i < set->count; i++) {
+    for (size_t i = 0; i < set->count; i++) {
         set->values[i] = 0;
     }
     set->count = 0;

@@ -24,7 +24,7 @@ int reallocate_updates(int ***updates, const int updates_count);
 
 int reallocate_updates_line(int **updates_line, const int updates_count);
 
-void process_file_day05(FILE *file, Day05Data *data);
+void process_file_day05(FILE *file, void *data);
 
 int is_day05_update_correct(const int *updates_line, const PageRule **rules, const int rules_count);
 

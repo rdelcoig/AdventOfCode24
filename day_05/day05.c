@@ -64,16 +64,16 @@ static int set_order(int **updates, const int idx_left, const int idx_right,
 static void reorder_updates(int ***unordered_updates, const int updates_count,
                             PageRule *rules, const int rules_count) {
     // for each line
-    for (int i = 0; i < updates_count; i++) {
+    for (size_t i = 0; i < updates_count; i++) {
         int *updates_line = (*unordered_updates)[i];
         if (updates_line == NULL) {
             break;
         }
 
         // for each page
-        for (int j = 0; j < UPDATE_MAX_COUNT && updates_line[j] > -1; j++) {
+        for (size_t j = 0; j < UPDATE_MAX_COUNT && updates_line[j] > -1; j++) {
             // test each previous page with current
-            for (int k = 0; k < j; k++) {
+            for (size_t k = 0; k < j; k++) {
                 set_order(&updates_line, k, j, rules, rules_count);
             }
         }
@@ -81,12 +81,12 @@ static void reorder_updates(int ***unordered_updates, const int updates_count,
 }
 
 static void separate_updates(int ***updates, const int updates_count,
-                             const PageRule **rules, const int rules_count,
+                             PageRule **rules, const int rules_count,
                              int ***correct_updates, int *correct_updates_count,
                              int ***incorrect_updates, int *incorrect_updates_count) {
     *correct_updates_count = 0;
     *incorrect_updates_count = 0;
-    for (int i = 0; i < updates_count; i++) {
+    for (size_t i = 0; i < updates_count; i++) {
         int *updates_line = (*updates)[i];
         if (is_day05_update_correct(updates_line, rules, rules_count)) {
             if (!reallocate_updates(correct_updates, *correct_updates_count + 1)) {
@@ -130,7 +130,7 @@ void set_day05_answer(Answer2Parts *answer) {
     answer->part_2 = get_day05_total(incorrect_updates, incorrect_updates_count);
 
     if (data.updates != NULL) {
-        for (int i = 0; i < data.updates_count; i++) {
+        for (size_t i = 0; i < data.updates_count; i++) {
             int *current = data.updates[i];
             if (current != NULL) {
                 free(current);

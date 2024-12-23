@@ -17,7 +17,8 @@
 /**
  * Read file & store to jagged array
  */
-static void process_file_day02(FILE *file, int **reports) {
+static void process_file_day02(FILE *file, void *reports_ptr) {
+    int **reports = (int **) reports_ptr;
     int report_index = 0;
 
     // read all reports
@@ -32,7 +33,7 @@ static void process_file_day02(FILE *file, int **reports) {
 
             // read one level
             while (1) {
-                c = fgetc(file);
+                c = (char) fgetc(file);
 
                 if (c == '\n' || c == ' ' || c == EOF)
                     break;
@@ -60,11 +61,11 @@ static void process_file_day02(FILE *file, int **reports) {
 /**
  * Remove level specified by index and move left next levels
  */
-static void remove_level(int *report, const int index) {
-    for (int i = index; i < MAX_LEVELS - 1; i++) {
-        report[i] = report[i + 1];
-    }
-}
+// static void remove_level(int *report, const int index) {
+//     for (size_t i = index; i < MAX_LEVELS - 1; i++) {
+//         report[i] = report[i + 1];
+//     }
+// }
 
 /**
  * Get valid direction
@@ -83,15 +84,11 @@ static int get_direction(const int left, const int right) {
 /**
  * Get first bad level index or -1
  */
-static int get_bad_index(const int *report, const int skip_index) {
+static int get_bad_index(const int *report, size_t skip_index) {
     int direction = INT_MIN;
 
     int report_tmp[10] = {};
     memcpy(report_tmp, report, sizeof(int) * 10);
-
-    if (skip_index > -1) {
-        remove_level(report_tmp, skip_index);
-    }
 
     int i = 0;
     while (i < MAX_LEVELS) {
@@ -121,9 +118,9 @@ static int get_bad_index(const int *report, const int skip_index) {
     return -1;
 }
 
-int get_bad_index_with_tolerance(const int *report, const int bad_index) {
+size_t get_bad_index_with_tolerance(const int *report, const size_t bad_index) {
     // re-try by removing previous or current or next level
-    for (int j = -1; j <= 1; j++) {
+    for (size_t j = 0; j <= 1; j++) {
         if (bad_index + j < 0 || bad_index + j >= MAX_LEVELS)
             continue;
 
@@ -146,8 +143,11 @@ int is_safe(const int *report, const int with_tolerance) {
 }
 
 static int count_safe_reports(int **reports, const int with_tolerance) {
+    if (reports == NULL)
+        return 0;
+
     int safe = 0;
-    for (int i = 0; i < REPORTS_COUNT; ++i) {
+    for (size_t i = 0; i < REPORTS_COUNT; ++i) {
         const int *report = reports[i];
         const int is_end_of_reports = report[0] == 0;
 
@@ -170,7 +170,7 @@ static int get_day02_part2_answer(int **reports) {
 
 void set_day02_answer(Answer2Parts *answer) {
     int **reports = malloc(REPORTS_COUNT * sizeof(int *));
-    for (int i = 0; i < REPORTS_COUNT; i++) {
+    for (size_t i = 0; i < REPORTS_COUNT; i++) {
         reports[i] = calloc(MAX_LEVELS, sizeof(int));
     }
 
@@ -179,7 +179,7 @@ void set_day02_answer(Answer2Parts *answer) {
     answer->part_1 = get_day02_part1_answer(reports);
     answer->part_2 = get_day02_part2_answer(reports);
 
-    for (int i = 0; i < REPORTS_COUNT; i++) {
+    for (size_t i = 0; i < REPORTS_COUNT; i++) {
         if (reports[i] != NULL)
             free(reports[i]);
     }

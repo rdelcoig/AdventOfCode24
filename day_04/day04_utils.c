@@ -13,7 +13,8 @@ typedef struct {
     char **raw_data;
 } Day04Data;
 
-static void process_file_day04(FILE *file, Day04Data *data) {
+static void process_file_day04(FILE *file, void *data_ptr) {
+    const Day04Data *data = (void *) data_ptr;
     int i = 0;
     const int size_buffer = 200;
     char line[size_buffer];
@@ -26,7 +27,7 @@ static void process_file_day04(FILE *file, Day04Data *data) {
 int read_file_day04_and_return_answer(const char *file_path, const TableSize *size,
                                       int (*get_total)(char **lines, const TableSize *size)) {
     char *lines[size->lines];
-    for (int i = 0; i < size->lines; i++) {
+    for (size_t i = 0; i < size->lines; i++) {
         lines[i] = calloc(size->columns + 1, sizeof(char));
     }
 
@@ -38,7 +39,7 @@ int read_file_day04_and_return_answer(const char *file_path, const TableSize *si
 
     const int total = get_total(lines, size);
 
-    for (int i = 0; i < size->lines; i++)
+    for (size_t i = 0; i < size->lines; i++)
         free(lines[i]);
 
     return total;

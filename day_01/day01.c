@@ -27,7 +27,8 @@ static int compare(const void *left, const void *right) {
 /**
  * Read day 01 file and store left and right columns in corresponding arrays
  */
-static void process_file_day01(FILE *file, Day01Data *data) {
+static void process_file_day01(FILE *file, void *data_ptr) {
+    Day01Data *data = (Day01Data *) data_ptr;
     int i = 0;
 
     while (fscanf(file, "%d   %d", &data->left_array[i], &data->right_array[i]) == 2 && i < ARRAY_SIZE) {
@@ -37,7 +38,7 @@ static void process_file_day01(FILE *file, Day01Data *data) {
 
 static int get_day01_part1_answer(const int *left_array, const int *right_array) {
     int result = 0;
-    for (int i = 0; i < ARRAY_SIZE; i++) {
+    for (size_t i = 0; i < ARRAY_SIZE; i++) {
         result += abs(left_array[i] - right_array[i]);
     }
 
@@ -47,11 +48,11 @@ static int get_day01_part1_answer(const int *left_array, const int *right_array)
 static int get_day02_part2_answer(const int *left_array, const int *right_array) {
     int similarity_score = 0;
 
-    for (int i = 0; i < ARRAY_SIZE; i++) {
+    for (size_t i = 0; i < ARRAY_SIZE; i++) {
         const int current_left = left_array[i];
 
         int similarity_score_tmp = 0;
-        for (int j = 0; j < ARRAY_SIZE; j++) {
+        for (size_t j = 0; j < ARRAY_SIZE; j++) {
             const int current_right = right_array[j];
             if (current_left == current_right) {
                 similarity_score_tmp += current_left;

@@ -22,7 +22,7 @@ void set_part2_test_data(char *memory_data_array, const int array_size) {
 int get_part2_answer(const char *memory_data_array) {
     int total = 0;
     int skip_next_instruction = 0;
-    for (int i = 0; i < strlen(memory_data_array); i++) {
+    for (size_t i = 0; i < strlen(memory_data_array); i++) {
         const char current = memory_data_array[i];
 
         if (current != 'm' && current != 'd') {

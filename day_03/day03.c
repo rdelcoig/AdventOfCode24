@@ -16,7 +16,8 @@ typedef struct {
     int data_count;
 } Day03Data;
 
-static void process_file_day03(FILE *file, Day03Data *data) {
+static void process_file_day03(FILE *file, void *data_ptr) {
+    Day03Data *data = (Day03Data *) data_ptr;
     int i = 0;
     char c = 0;
     while ((c = (char) fgetc(file)) != EOF) {

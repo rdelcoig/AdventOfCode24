@@ -25,7 +25,7 @@ int main(void) {
     };
 
     void (*calls[days])(Answer2Parts *);
-    for (int i = 0; i < days; i++) {
+    for (size_t i = 0; i < days; i++) {
         calls[i] = NULL;
     }
 
@@ -38,7 +38,7 @@ int main(void) {
     calls[6] = set_day07_answer;
 
     const int start = days - days; // set n last answers to show here
-    for (int i = start; i < days; i++) {
+    for (size_t i = start; i < days; i++) {
         if (calls[i] == NULL) {
             continue;
         }
