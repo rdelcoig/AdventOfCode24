@@ -7,6 +7,8 @@
 
 #include <stdio.h>
 
+#include "matrix_map.h"
+
 #define COMPARE(l,r) ((l < r) ? -1 : (l > r))
 
 typedef struct {
@@ -14,15 +16,7 @@ typedef struct {
     unsigned long long part_2;
 } Answer2Parts;
 
-typedef struct {
-    int x;
-    int y;
-} Point;
 
-typedef struct {
-    int lines;
-    int columns;
-} TableSize;
 
 Point add_points(const Point *point1, const Point *point2);
 
