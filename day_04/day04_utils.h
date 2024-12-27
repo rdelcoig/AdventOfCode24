@@ -5,7 +5,7 @@
 #ifndef FILE_DAY04_H
 #define FILE_DAY04_H
 
-#include "../common/utils.h"
+#include "../common/matrix_map.h"
 
 int read_file_day04_and_return_answer(const char *file_path, const TableSize *size,
                                       int (*get_total)(char **lines, const TableSize *size));

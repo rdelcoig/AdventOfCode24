@@ -58,19 +58,6 @@ static void process_file_day02(FILE *file, void *reports_ptr) {
     }
 }
 
-/**
- * Remove level specified by index and move left next levels
- */
-// static void remove_level(int *report, const int index) {
-//     for (size_t i = index; i < MAX_LEVELS - 1; i++) {
-//         report[i] = report[i + 1];
-//     }
-// }
-
-/**
- * Get valid direction
- * Return 0 when not valid
- */
 static int get_direction(const int left, const int right) {
     const int difference = right - left;
     const int direction = INCREASING(difference);
@@ -81,19 +68,13 @@ static int get_direction(const int left, const int right) {
     return offset_ok * direction;
 }
 
-/**
- * Get first bad level index or -1
- */
-static int get_bad_index(const int *report, size_t skip_index) {
+static int has_bad_index(const int *report, size_t *bad_index) {
     int direction = INT_MIN;
 
-    int report_tmp[10] = {};
-    memcpy(report_tmp, report, sizeof(int) * 10);
-
-    int i = 0;
+    size_t i = 0;
     while (i < MAX_LEVELS) {
-        const int current = report_tmp[i];
-        const int next = report_tmp[i + 1];
+        const int current = report[i];
+        const int next = report[i + 1];
 
         // current = last
         if (next == 0) {
@@ -110,36 +91,51 @@ static int get_bad_index(const int *report, size_t skip_index) {
         if (direction_tmp && direction_tmp == direction) {
             i++;
         } else {
-            return i;
+            *bad_index = i;
+            return 1;
         }
     }
 
     // if safe, return -1
-    return -1;
+    return 0;
 }
 
-size_t get_bad_index_with_tolerance(const int *report, const size_t bad_index) {
+int has_bad_index_with_tolerance(const int *report, const size_t bad_index, size_t *bad_index_tmp) {
     // re-try by removing previous or current or next level
-    for (size_t j = 0; j <= 1; j++) {
+    for (int j = -1; j <= 1; j++) {
         if (bad_index + j < 0 || bad_index + j >= MAX_LEVELS)
             continue;
 
-        const int bad_index_tmp = get_bad_index(report, bad_index + j);
+        // copy line without test value
+        int report_tmp[MAX_LEVELS] = {};
+        size_t tmp_index = 0;
+        for (size_t i = 0; i < MAX_LEVELS; i++) {
+            if (i == bad_index + j) {
+                continue;
+            }
+            report_tmp[tmp_index++] = report[i];
+        }
 
-        if (bad_index_tmp < 0) {
-            return bad_index_tmp;
+        const int with_bad_index = has_bad_index(report_tmp, bad_index_tmp);
+
+        if (!with_bad_index) {
+            return 0;
         }
     }
-    return bad_index;
+    return 1;
 }
 
 int is_safe(const int *report, const int with_tolerance) {
-    const int bad_index = get_bad_index(report, -1);
+    size_t bad_index;
+    int with_bad_index = has_bad_index(report, &bad_index);
 
-    if (with_tolerance)
-        return get_bad_index_with_tolerance(report, bad_index) < 0;
+    if (!with_bad_index || !with_tolerance) {
+        return !with_bad_index;
+    }
 
-    return bad_index < 0;
+    size_t bad_index_tmp;
+    with_bad_index = has_bad_index_with_tolerance(report, bad_index, &bad_index_tmp);
+    return !with_bad_index;
 }
 
 static int count_safe_reports(int **reports, const int with_tolerance) {

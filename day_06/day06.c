@@ -15,10 +15,10 @@
 
 #define MAX_ITERATIONS 5000
 
-static void set_unique_positions(const int **map, const TableSize *size, SetInt *move_history,
+static void set_unique_positions(MatrixMap *map, SetInt *move_history,
                                  SetInt *agent_move_history, int *infinity_loop) {
     PatrolAgent agent;
-    retrieve_agent(map, size, &agent);
+    retrieve_agent(map, &agent);
     const PatrolAgent start_agent = agent;
 
     if (infinity_loop != NULL) {
@@ -35,7 +35,7 @@ static void set_unique_positions(const int **map, const TableSize *size, SetInt 
 
         // move the agent
         int leave_area;
-        move_agent_before_next_obstruction(map, size, &agent, &leave_area);
+        move_agent_before_next_obstruction(map, &agent, &leave_area);
 
         if (move_history != NULL) {
             add_move_history(move_history, &current_agent.position, &agent.position);
@@ -56,16 +56,16 @@ static void set_unique_positions(const int **map, const TableSize *size, SetInt 
         }
     }
 
-    write_in_map(map, size, &agent.position, EMPTY_SPACE);
-    write_in_map(map, size, &start_agent.position, start_agent.direction);
+    set_value_in_matrix_map(map, &agent.position, EMPTY_SPACE);
+    set_value_in_matrix_map(map, &start_agent.position, start_agent.direction);
 }
 
-static int get_patrol_infinite_loops_count(const int **map, const TableSize *size, const SetInt *move_history) {
+static int get_patrol_infinite_loops_count(MatrixMap *map, const SetInt *move_history) {
     PatrolAgent start_agent;
-    retrieve_agent(map, size, &start_agent);
+    retrieve_agent(map, &start_agent);
     const Point start_position = start_agent.position;
 
-    int **test_map = clone_map(map, size);
+    MatrixMap *test_map = clone_matrix_map(map);
     SetInt *agent_move_history = create_set_int();
 
     int loop_count = 0;
@@ -79,22 +79,21 @@ static int get_patrol_infinite_loops_count(const int **map, const TableSize *siz
         }
 
         // set obstruction on test position
-        write_in_map(test_map, size, &past_move, OBSTRUCTION);
+        set_value_in_matrix_map(test_map, &past_move, OBSTRUCTION);
 
         // test if infinite loop
         int infinity_loop = 0;
 
-        set_unique_positions(test_map, size, NULL, agent_move_history, &infinity_loop);
+        set_unique_positions(test_map, NULL, agent_move_history, &infinity_loop);
 
         clear_set_int(agent_move_history);
 
         loop_count += infinity_loop;
 
-        write_in_map(test_map, size, &past_move, EMPTY_SPACE);
+        set_value_in_matrix_map(test_map, &past_move, EMPTY_SPACE);
     }
 
-    free_map(&test_map, size);
-    free_map(&test_map, size);
+    free_matrix_map(&test_map);
     free_set_int(agent_move_history);
     return loop_count;
 }
@@ -103,14 +102,13 @@ void set_day06_answer(Answer2Parts *answer) {
     // const char *path = "../day_06/day06_test.txt";
     const char *path = "../day_06/day06.txt";
 
-    Day06Data data = {NULL, {0, 0}};
-    read_file(path, &data, process_file_day06);
+    MatrixMap *base_map = NULL;
+    read_file(path, &base_map, process_file_day06);
 
-    const int **map = clone_map(data.map, &data.size);
-
+    MatrixMap *map = clone_matrix_map(base_map);
     SetInt *move_history = create_set_int();
 
-    set_unique_positions(map, &data.size, move_history, NULL, NULL);
+    set_unique_positions(map, move_history, NULL, NULL);
 
     if (move_history->count > INT_MAX) {
         printf("Too many moves\n");
@@ -118,12 +116,13 @@ void set_day06_answer(Answer2Parts *answer) {
         answer->part_1 = (int) move_history->count;
 
         // reset map
-        copy_map(data.map, map, &data.size);
+        copy_matrix_map(base_map, map);
 
-        answer->part_2 = get_patrol_infinite_loops_count(map, &data.size, move_history);
+        answer->part_2 = get_patrol_infinite_loops_count(map, move_history);
     }
 
-    free_map(&map, &data.size);
-    free_map(&data.map, &data.size);
+    free_matrix_map(&base_map);
+    free_matrix_map(&map);
+
     free_set_int(move_history);
 }

@@ -5,10 +5,11 @@
 #ifndef DAY06_AGENT_MAP_H
 #define DAY06_AGENT_MAP_H
 #include "day06_agent.h"
+#include "../common/matrix_map.h"
 
 // retrieve agent from map
-void retrieve_agent(const int **map, const TableSize *size, PatrolAgent *agent);
+void retrieve_agent(const MatrixMap *map, PatrolAgent *agent) ;
 
-void move_agent_before_next_obstruction(int **map, const TableSize *size, PatrolAgent *agent, int *leave_area);
+void move_agent_before_next_obstruction(const MatrixMap *map, PatrolAgent *agent, int *leave_area);
 
 #endif //DAY06_AGENT_MAP_H

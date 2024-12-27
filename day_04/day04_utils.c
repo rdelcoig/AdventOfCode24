@@ -7,6 +7,8 @@
 #include <stdlib.h>
 
 #include "day04_utils.h"
+#include "../common/matrix_map.h"
+#include "../common/utils.h"
 
 typedef struct {
     const TableSize *size;

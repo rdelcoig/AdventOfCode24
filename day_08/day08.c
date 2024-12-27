@@ -156,7 +156,7 @@ static void process_file_day07(FILE *file, void *data_ptr) {
 
     for (size_t y = 0; y < data->map->size.lines; y++) {
         for (size_t x = 0; x < data->map->size.columns; x++) {
-            const char current_char = data->map->map[y][x];
+            const char current_char = data->map->values[y][x];
             if (current_char == EMPTY_SPACE) {
                 continue;
             }
@@ -169,7 +169,7 @@ void set_day08_answer(Answer2Parts *answer) {
     Day08Data data;
     read_file("../day_08/day08_test.txt", &data, process_file_day07);
 
-    print_matrix_map(data.map);
+    // print_matrix_map(data.map);
 
     answer->part_1 = 0;
     answer->part_2 = 0;

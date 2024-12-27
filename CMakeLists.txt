@@ -8,6 +8,7 @@ add_executable(AdventOfCode24
         common/utils.c
         common/set.c
         common/matrix_map.c
+        common/point.c
         day_01/day01.c
         day_02/day02.c
         day_03/instruction.c

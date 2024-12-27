@@ -40,8 +40,7 @@ int main(void) {
     calls[6] = set_day07_answer;
     calls[7] = set_day08_answer;
 
-    const int start = days - 1; // set n last answers to show here
-    for (size_t i = start; i < days; i++) {
+    for (size_t i = 0; i < days; i++) {
         if (calls[i] == NULL) {
             continue;
         }
@@ -49,8 +48,7 @@ int main(void) {
         Answer2Parts answer;
         calls[i](&answer);
 
-        const int day = i + 1;
-        printf("\nDay %02d results\n--------------\n", day);
+        printf("\nDay %02lu results\n--------------\n", i + 1);
         printf("Part 1 : %llu\n", answer.part_1);
         printf("Part 2 : %llu\n", answer.part_2);
 

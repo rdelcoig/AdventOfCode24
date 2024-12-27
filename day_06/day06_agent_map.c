@@ -10,20 +10,20 @@
 #include "day06_agent.h"
 #include "day06_map.h"
 
-void move_agent_in_map(int **map, const TableSize *size, const Point *current_position, const PatrolAgent *agent) {
+void move_agent_in_map(const MatrixMap *map, const Point *current_position, const PatrolAgent *agent) {
     // move agent to next position
-    write_in_map(map, size, &agent->position, agent->direction);
+    set_value_in_matrix_map(map, &agent->position, agent->direction);
 
     // set empty space in agent previous position
-    write_in_map(map, size, current_position, EMPTY_SPACE);
+    set_value_in_matrix_map(map, current_position, EMPTY_SPACE);
 }
 
 // retrieve agent from map
-void retrieve_agent(const int **map, const TableSize *size, PatrolAgent *agent) {
-    for (int y = 0; y < size->lines; y++) {
-        for (int x = 0; x < size->columns; x++) {
+void retrieve_agent(const MatrixMap *map, PatrolAgent *agent) {
+    for (int y = 0; y < map->size.lines; y++) {
+        for (int x = 0; x < map->size.columns; x++) {
             Point position = {x, y};
-            const char c = read_map(map, size, &position);
+            const char c = get_value_in_matrix_map(map, &position);
             if (is_agent(c)) {
                 agent->position = position;
                 agent->direction = c;
@@ -36,11 +36,11 @@ void retrieve_agent(const int **map, const TableSize *size, PatrolAgent *agent) 
     exit(1);
 }
 
-static void set_next_step_before_obstruction(int **map, const TableSize *size, PatrolAgent *agent, int *leave_area) {
-    int max;
+static void set_next_step_before_obstruction(const MatrixMap *map, PatrolAgent *agent, int *leave_area) {
+    size_t max;
     switch (agent->direction) {
         case AGENT_EAST:
-            max = size->columns - agent->position.x;
+            max = map->size.columns - agent->position.x;
             break;
         case AGENT_WEST:
             max = agent->position.x;
@@ -49,7 +49,7 @@ static void set_next_step_before_obstruction(int **map, const TableSize *size, P
             max = agent->position.y;
             break;
         case AGENT_SOUTH:
-            max = size->lines - agent->position.y;
+            max = map->size.lines - agent->position.y;
             break;
         default:
             printf("Invalid direction %c", agent->direction);
@@ -64,12 +64,12 @@ static void set_next_step_before_obstruction(int **map, const TableSize *size, P
     while (i <= max) {
         Point p = add_points(&agent_position, &test_position);
 
-        if (is_out_of_bounds(size, &p)) {
+        if (is_out_of_map(map, &p)) {
             *leave_area = 1;
             break;
         }
 
-        if (read_map(map, size, &p) == OBSTRUCTION) {
+        if (get_value_in_matrix_map(map, &p) == OBSTRUCTION) {
             break;
         }
 
@@ -80,14 +80,14 @@ static void set_next_step_before_obstruction(int **map, const TableSize *size, P
     set_point(&agent->position, agent_position);
 }
 
-void move_agent_before_next_obstruction(int **map, const TableSize *size, PatrolAgent *agent, int *leave_area) {
+void move_agent_before_next_obstruction(const MatrixMap *map, PatrolAgent *agent, int *leave_area) {
     const Point position_init = agent->position;
 
     PatrolAgent test_agent = *agent;
     const int max_rotation_moves = 4;
     int i = 0;
     while (i < max_rotation_moves) {
-        set_next_step_before_obstruction(map, size, &test_agent, leave_area);
+        set_next_step_before_obstruction(map, &test_agent, leave_area);
         if (!equals(&test_agent.position, &position_init)) {
             break;
         }
@@ -96,12 +96,12 @@ void move_agent_before_next_obstruction(int **map, const TableSize *size, Patrol
     }
 
     if (!*leave_area && i == max_rotation_moves) {
-        printf("Agent %c is stuck {%d,%d}\n", agent->direction, agent->position.x, agent->position.y);
+        printf("Agent %c is stuck {%lu,%lu}\n", agent->direction, agent->position.x, agent->position.y);
         exit(1);
     }
 
     agent->direction = test_agent.direction;
     agent->position = test_agent.position;
 
-    move_agent_in_map(map, size, &position_init, agent);
+    move_agent_in_map(map, &position_init, agent);
 }

@@ -5,167 +5,84 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include "day06_map.h"
-#include "day06_agent.h"
 
-char read_map(const int **map, const TableSize *size, const Point *point) {
-    if (is_out_of_bounds(size, point)) {
-        printf("Read out of bounds: %d %d\n", point->x, point->y);
-        exit(1);
-    }
-    return (char) map[point->y][point->x];
-}
-
-void write_in_map(int **map, const TableSize *size, const Point *point, const char value) {
-    if (is_out_of_bounds(size, point)) {
-        printf("Write out of bounds: %d %d\n", point->x, point->y);
-        exit(1);
-    }
-    map[point->y][point->x] = (int) value;
-}
-
-void print_map(const int **map, const TableSize *size) {
-    for (int y = 0; y < size->lines; y++) {
-        for (int x = 0; x < size->columns; x++) {
-            putchar(map[y][x]);
-        }
-        putchar('\n');
-    }
-    putchar('\n');
-}
-
-int **create_map(const TableSize *size) {
-    int **map = malloc(size->lines * sizeof(int *));
-    for (int i = 0; i < size->lines; i++) {
-        map[i] = malloc(size->columns * sizeof(int));
-    }
-    return map;
-}
-
-void copy_map(const int **map_from, int **map_to, const TableSize *size) {
-    if (map_from == NULL || map_to == NULL) {
-        printf("Invalid map\n");
-        exit(1);
-    }
-
-    for (int y = 0; y < size->lines; y++) {
-        for (int x = 0; x < size->columns; x++) {
-            map_to[y][x] = map_from[y][x];
-        }
-    }
-}
-
-int **clone_map(const int **map, const TableSize *size) {
-    int **copy = malloc(size->lines * sizeof(int *));
-    for (int y = 0; y < size->lines; y++) {
-        copy[y] = malloc(size->columns * sizeof(int));
-    }
-    copy_map(map, copy, size);
-    return copy;
-}
-
-void free_map(int ***map, const TableSize *size) {
-    if (map == NULL) {
-        return;
-    }
-    if (*map != NULL) {
-        for (int i = 0; i < size->lines; i++) {
-            if ((*map)[i] != NULL) {
-                free((*map)[i]);
-                (*map)[i] = NULL;
-            }
-        }
-        free(*map);
-        *map = NULL;
-    }
-    map = NULL;
-}
-
-void process_file_day06(FILE *file, Day06Data *data) {
-    data->size.lines = 0;
-    data->size.columns = 0;
+void process_file_day06(FILE *file, MatrixMap **data) {
+    size_t lines = 0;
+    size_t columns = 0;
 
     // read a 1st time to get size
     const int size_buffer = 1024;
     char buffer[size_buffer];
     while (fgets(buffer, size_buffer, file)) {
-        data->size.lines++;
-        data->size.columns = (int) strlen(buffer);
+        lines++;
+        columns = (int) strlen(buffer);
     }
 
-    // init 2D array
-    data->map = create_map(&data->size);
+    *data = create_matrix_map(lines, columns);
 
     // read again to fill the array
     rewind(file);
 
     int lines_index = 0;
     while (fgets(buffer, size_buffer, file)) {
-        for (int columns_index = 0; columns_index < data->size.columns; columns_index++) {
-            data->map[lines_index][columns_index] = (int) buffer[columns_index];
+        for (int columns_index = 0; columns_index < (*data)->size.columns; columns_index++) {
+            (*data)->values[lines_index][columns_index] = buffer[columns_index];
         }
         lines_index++;
     }
 }
 
-
-static int encode_point(const Point *point) {
-    return point->x * 10000 + point->y;
-}
-
-static void decode_point(const int code, Point *point) {
-    const int x = code / 10000;
-    const int y = code % 10000;
-    point->x = x;
-    point->y = y;
-}
-
 int add_point_to_set(SetInt *set, const Point *point) {
-    const int code = encode_point(point);
+    if (point->x > INT_MAX / 1000 || point->y > INT_MAX / 1000) {
+        printf("Invalid x %lu y %lu\n", point->x, point->y);
+        exit(1);
+    }
+
+    const int code = point->x * 1000 + point->y;
     return add_value_set_int(set, code);
 }
 
 void retrieve_point_from_set(const SetInt *set, const int index, Point *agent) {
     const int code = set->values[index];
-    decode_point(code, agent);
+    const int x = code / 1000;
+    const int y = code % 1000;
+    agent->x = x;
+    agent->y = y;
 }
 
 void add_move_history(SetInt *move_history, const Point *from, const Point *to) {
-    if (move_history == NULL) {
-        return;
-    }
-    if (from == NULL) {
-        return;
-    }
-    if (to == NULL) {
+    if (move_history == NULL || from == NULL || to == NULL) {
         return;
     }
 
     Point from_position = *from;
+    size_t start, end;
     if (from_position.x == to->x) {
         if (from_position.y <= to->y) {
-            for (int y = from_position.y; y <= to->y; y++) {
-                from_position.y = y;
-                add_point_to_set(move_history, &from_position);
-            }
+            start = from_position.y;
+            end = to->y;
         } else {
-            for (int y = from_position.y; y >= to->y; y--) {
-                from_position.y = y;
-                add_point_to_set(move_history, &from_position);
-            }
+            start = to->y;
+            end = from_position.y;
+        }
+        for (size_t y = start; y <= end; y++) {
+            from_position.y = y;
+            add_point_to_set(move_history, &from_position);
         }
     } else if (from_position.y == to->y) {
         if (from_position.x <= to->x) {
-            for (int x = from_position.x; x <= to->x; x++) {
-                from_position.x = x;
-                add_point_to_set(move_history, &from_position);
-            }
+            start = from_position.x;
+            end = to->x;
         } else {
-            for (int x = from_position.x; x >= to->x; x--) {
-                from_position.x = x;
-                add_point_to_set(move_history, &from_position);
-            }
+            start = to->x;
+            end = from_position.x;
+        }
+        for (size_t x = start; x <= end; x++) {
+            from_position.x = x;
+            add_point_to_set(move_history, &from_position);
         }
     }
 }
