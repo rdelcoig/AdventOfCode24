@@ -26,6 +26,6 @@ int is_agent(const char c);
 
 void rotate_agent(PatrolAgent *agent);
 
-int add_agent_to_set(SetInt *set, const PatrolAgent *agent);
+int add_agent_to_set(Set *set, const PatrolAgent *agent);
 
 #endif //DAY06_AGENT_H

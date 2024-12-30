@@ -8,12 +8,6 @@
 #include <stddef.h>
 
 typedef struct {
-    int *values;
-    size_t count;
-    size_t capacity;
-} SetInt;
-
-typedef struct {
     char **values;
     size_t count;
     size_t capacity;
@@ -23,18 +17,10 @@ Set *create_set();
 
 void free_set(Set *set);
 
-int contains_set_value(Set *set, char *value);
+int contains_set_value(const Set *set, const char *key);
 
 int add_set_value(Set *set, char *value);
 
-SetInt *create_set_int();
-
-void free_set_int(SetInt *set);
-
-int contains_value_set_int(const SetInt *set, const int key, size_t *index);
-
-int add_value_set_int(SetInt *set, const int value);
-
-void clear_set_int(SetInt *set);
+void clear_set(Set *set);
 
 #endif //SET_H

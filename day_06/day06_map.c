@@ -9,6 +9,8 @@
 
 #include "day06_map.h"
 
+#define POINT_FMT "%lu,%lu"
+
 void process_file_day06(FILE *file, MatrixMap **data) {
     size_t lines = 0;
     size_t columns = 0;
@@ -35,25 +37,22 @@ void process_file_day06(FILE *file, MatrixMap **data) {
     }
 }
 
-int add_point_to_set(SetInt *set, const Point *point) {
-    if (point->x > INT_MAX / 1000 || point->y > INT_MAX / 1000) {
-        printf("Invalid x %lu y %lu\n", point->x, point->y);
+static int add_point_to_set(Set *set, const Point *point) {
+    size_t size = snprintf(NULL, 0, POINT_FMT, point->x, point->y);
+    char buffer[size + 1]; // +1 for terminating null byte
+    snprintf(buffer, sizeof buffer, POINT_FMT, point->x, point->y);
+    return add_set_value(set, buffer);
+}
+
+void retrieve_point_from_set(const Set *set, const int index, Point *agent) {
+    const int scanned_args = sscanf(set->values[index], POINT_FMT, &agent->x, &agent->y);
+    if (scanned_args != 2) {
+        printf("Invalid point %s\n", set->values[index]);
         exit(1);
     }
-
-    const int code = point->x * 1000 + point->y;
-    return add_value_set_int(set, code);
 }
 
-void retrieve_point_from_set(const SetInt *set, const int index, Point *agent) {
-    const int code = set->values[index];
-    const int x = code / 1000;
-    const int y = code % 1000;
-    agent->x = x;
-    agent->y = y;
-}
-
-void add_move_history(SetInt *move_history, const Point *from, const Point *to) {
+void add_move_history(Set *move_history, const Point *from, const Point *to) {
     if (move_history == NULL || from == NULL || to == NULL) {
         return;
     }

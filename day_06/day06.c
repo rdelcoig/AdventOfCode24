@@ -15,8 +15,8 @@
 
 #define MAX_ITERATIONS 5000
 
-static void set_unique_positions(MatrixMap *map, SetInt *move_history,
-                                 SetInt *agent_move_history, int *infinity_loop) {
+static void set_unique_positions(MatrixMap *map, Set *move_history,
+                                 Set *agent_move_history, int *infinity_loop) {
     PatrolAgent agent;
     retrieve_agent(map, &agent);
     const PatrolAgent start_agent = agent;
@@ -60,13 +60,13 @@ static void set_unique_positions(MatrixMap *map, SetInt *move_history,
     set_value_in_matrix_map(map, &start_agent.position, start_agent.direction);
 }
 
-static int get_patrol_infinite_loops_count(MatrixMap *map, const SetInt *move_history) {
+static int get_patrol_infinite_loops_count(MatrixMap *map, const Set *move_history) {
     PatrolAgent start_agent;
     retrieve_agent(map, &start_agent);
     const Point start_position = start_agent.position;
 
     MatrixMap *test_map = clone_matrix_map(map);
-    SetInt *agent_move_history = create_set_int();
+    Set *agent_move_history = create_set();
 
     int loop_count = 0;
     for (int round = 0; round < move_history->count; round++) {
@@ -86,7 +86,7 @@ static int get_patrol_infinite_loops_count(MatrixMap *map, const SetInt *move_hi
 
         set_unique_positions(test_map, NULL, agent_move_history, &infinity_loop);
 
-        clear_set_int(agent_move_history);
+        clear_set(agent_move_history);
 
         loop_count += infinity_loop;
 
@@ -94,7 +94,7 @@ static int get_patrol_infinite_loops_count(MatrixMap *map, const SetInt *move_hi
     }
 
     free_matrix_map(&test_map);
-    free_set_int(agent_move_history);
+    free_set(agent_move_history);
     return loop_count;
 }
 
@@ -106,7 +106,7 @@ void set_day06_answer(Answer2Parts *answer) {
     read_file(path, &base_map, process_file_day06);
 
     MatrixMap *map = clone_matrix_map(base_map);
-    SetInt *move_history = create_set_int();
+    Set *move_history = create_set();
 
     set_unique_positions(map, move_history, NULL, NULL);
 
@@ -124,5 +124,5 @@ void set_day06_answer(Answer2Parts *answer) {
     free_matrix_map(&base_map);
     free_matrix_map(&map);
 
-    free_set_int(move_history);
+    free_set(move_history);
 }

@@ -14,10 +14,8 @@
 
 void process_file_day06(FILE *file, MatrixMap **data);
 
-int add_point_to_set(SetInt *set, const Point *point);
+void retrieve_point_from_set(const Set *set, const int index, Point *agent);
 
-void retrieve_point_from_set(const SetInt *set, const int index, Point *agent);
-
-void add_move_history(SetInt *move_history, const Point *from, const Point *to);
+void add_move_history(Set *move_history, const Point *from, const Point *to);
 
 #endif //DAY06_MAP_H

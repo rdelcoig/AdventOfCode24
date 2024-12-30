@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 
 #include "day06_agent.h"
 
@@ -56,25 +55,10 @@ void rotate_agent(PatrolAgent *agent) {
     }
 }
 
-static int encode_agent(const PatrolAgent *agent) {
-    const Point position = agent->position;
-    if (position.x > INT_MAX || position.y > INT_MAX) {
-        printf("Invalid x %lu y %lu\n", position.x, position.y);
-        exit(1);
-    }
-    return (agent->position.x * 1000 + agent->position.y) * 1000 + (int) agent->direction;
-}
-
-static void decode_agent(const int code, PatrolAgent *agent) {
-    const int x = code / 1000000;
-    const int y = code / 1000 % 1000;
-    const char direction = (char) (code % 1000);
-    agent->position.x = x;
-    agent->position.y = y;
-    agent->direction = direction;
-}
-
-int add_agent_to_set(SetInt *set, const PatrolAgent *agent) {
-    const int code = encode_agent(agent);
-    return add_value_set_int(set, code);
+int add_agent_to_set(Set *set, const PatrolAgent *agent) {
+    const char *fmt = "%lu,%lu,%c";
+    size_t size = snprintf(NULL, 0, fmt, agent->position.x, agent->position.y, agent->direction);
+    char buffer[size + 1];
+    snprintf(buffer, sizeof buffer, fmt, agent->position.x, agent->position.y, agent->direction);
+    return add_set_value(set, buffer);
 }
