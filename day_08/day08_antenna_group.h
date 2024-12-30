@@ -30,4 +30,8 @@ void add_antenna(AntennaGroupCollection *groups, const char frequency, const Poi
 
 void write_antinodes_to_map(const PointCouple *couple, MatrixMap *map);
 
+void write_antinodes_to_map_with_harmonics(const PointCouple *couple, MatrixMap *map);
+
+unsigned long count_antinodes(MatrixMap *map);
+
 #endif //DAY08_ANTENNA_GROUP_H

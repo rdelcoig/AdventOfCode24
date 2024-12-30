@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "day08.h"
 #include "day08_antenna_group.h"
@@ -50,9 +51,9 @@ static void process_file_day07(FILE *file, void *data_ptr) {
     }
 }
 
-void write_antinodes(Day08Data *data, MatrixMap **antinodes_map) {
-    *antinodes_map = create_matrix_map(data->map->size.lines, data->map->size.columns);
-    set_matrix_map(*antinodes_map, EMPTY_SPACE);
+static MatrixMap *create_antinodes_map(Day08Data *data, bool with_harmonics) {
+    MatrixMap *antinodes_map = create_matrix_map(data->map->size.lines, data->map->size.columns);
+    set_matrix_map(antinodes_map, EMPTY_SPACE);
 
     // loop through each group
     for (size_t g = 0; g < data->group_collection->count; g++) {
@@ -68,10 +69,15 @@ void write_antinodes(Day08Data *data, MatrixMap **antinodes_map) {
 
                 const PointCouple couple = {current_point, next_point};
 
-                write_antinodes_to_map(&couple, *antinodes_map);
+                if (with_harmonics) {
+                    write_antinodes_to_map_with_harmonics(&couple, antinodes_map);
+                } else {
+                    write_antinodes_to_map(&couple, antinodes_map);
+                }
             }
         }
     }
+    return antinodes_map;
 }
 
 void set_day08_answer(Answer2Parts *answer) {
@@ -79,21 +85,14 @@ void set_day08_answer(Answer2Parts *answer) {
     // read_file("../day_08/day08_test.txt", &data, process_file_day07);
     read_file("../day_08/day08.txt", &data, process_file_day07);
 
-    MatrixMap *antinodes_map = NULL;
-    write_antinodes(&data, &antinodes_map);
-    // print_matrix_map(antinodes_map);
-
-    unsigned long antinodes_count = 0;
-    for (size_t y = 0; y < antinodes_map->size.lines; y++) {
-        for (size_t x = 0; x < antinodes_map->size.columns; x++) {
-            antinodes_count += antinodes_map->values[y][x] == ANTI_NODE;
-        }
-    }
-
-    answer->part_1 = antinodes_count; // 381
-    answer->part_2 = 0;
-
+    MatrixMap *antinodes_map = create_antinodes_map(&data, false);
+    answer->part_1 = count_antinodes(antinodes_map);
     free_matrix_map(&antinodes_map);
+
+    antinodes_map = create_antinodes_map(&data, true);
+    answer->part_2 = count_antinodes(antinodes_map);
+    free_matrix_map(&antinodes_map);
+
     free_antenna_group_collection(&data.group_collection);
     free_matrix_map(&data.map);
 }

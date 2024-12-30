@@ -118,3 +118,32 @@ void write_antinodes_to_map(const PointCouple *couple, MatrixMap *map) {
         set_value_in_matrix_map(map, &antinode2_tmp, ANTI_NODE);
     }
 }
+
+void write_antinodes_to_map_with_harmonics(const PointCouple *couple, MatrixMap *map) {
+    const PointGap gap = get_point_gap(couple);
+
+    Point antinode_tmp = sub_gap(&couple->point1, &gap);
+    while (!is_out_of_map(map, &antinode_tmp)) {
+        set_value_in_matrix_map(map, &antinode_tmp, ANTI_NODE);
+        antinode_tmp = sub_gap(&antinode_tmp, &gap);
+    }
+
+    antinode_tmp = add_gap(&couple->point2, &gap);
+    while (!is_out_of_map(map, &antinode_tmp)) {
+        set_value_in_matrix_map(map, &antinode_tmp, ANTI_NODE);
+        antinode_tmp = add_gap(&antinode_tmp, &gap);
+    }
+
+    set_value_in_matrix_map(map, &couple->point1, ANTI_NODE);
+    set_value_in_matrix_map(map, &couple->point2, ANTI_NODE);
+}
+
+unsigned long count_antinodes(MatrixMap *map) {
+    unsigned long antinodes_count = 0;
+    for (size_t y = 0; y < map->size.lines; y++) {
+        for (size_t x = 0; x < map->size.columns; x++) {
+            antinodes_count += map->values[y][x] == ANTI_NODE;
+        }
+    }
+    return antinodes_count;
+}
