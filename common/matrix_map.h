@@ -37,4 +37,6 @@ void copy_matrix_map(const MatrixMap *source_map, MatrixMap *dest_map);
 
 MatrixMap *clone_matrix_map(const MatrixMap *matrix_map);
 
+void set_matrix_map(MatrixMap *map, const char character);
+
 #endif //MATRIX_MAP_H

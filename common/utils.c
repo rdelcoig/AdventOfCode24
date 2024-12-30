@@ -23,6 +23,20 @@ int reallocate_int_array(int **array_ptr, const size_t new_count) {
     return 1;
 }
 
+void reallocate_str_array(char ***array_ptr, const size_t new_count) {
+    const size_t new_size = new_count * sizeof(char *);
+
+    char **new_array = (char **) realloc(*array_ptr, new_size);
+    if (new_array == NULL) {
+        printf("Error: not enough memory\n");
+        if (*array_ptr != NULL) {
+            free(*array_ptr);
+        }
+        exit(1);
+    }
+    *array_ptr = new_array;
+}
+
 void read_file(const char *path, void *data, void (*process_file_ptr)(FILE *, void *)) {
     FILE *file = fopen(path, "r");
 

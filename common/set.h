@@ -13,6 +13,20 @@ typedef struct {
     size_t capacity;
 } SetInt;
 
+typedef struct {
+    char **values;
+    size_t count;
+    size_t capacity;
+} Set;
+
+Set *create_set();
+
+void free_set(Set *set);
+
+int contains_set_value(Set *set, char *value);
+
+int add_set_value(Set *set, char *value);
+
 SetInt *create_set_int();
 
 void free_set_int(SetInt *set);

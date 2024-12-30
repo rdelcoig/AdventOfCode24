@@ -3,139 +3,24 @@
 //
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "day08.h"
+#include "day08_antenna_group.h"
 #include "../common/matrix_map.h"
 #include "../common/utils.h"
-
-#define EMPTY_SPACE '.'
-#define ANTI_NODE '#'
-
-typedef struct {
-    char frequency;
-    Point *positions;
-    size_t positions_size;
-} AntennaGroup;
-
-typedef struct {
-    AntennaGroup **items;
-    size_t count;
-} AntennaGroupCollection;
 
 typedef struct {
     AntennaGroupCollection *group_collection;
     MatrixMap *map;
 } Day08Data;
 
-AntennaGroup *create_antenna_group(const char frequency) {
-    AntennaGroup *group = malloc(sizeof(AntennaGroup));
-    group->frequency = frequency;
-    group->positions = NULL;
-    group->positions_size = 0;
-    return group;
-}
-
-void free_antenna_group(AntennaGroup *group_ptr) {
-    if (group_ptr == NULL) {
-        return;
-    }
-    free(group_ptr->positions);
-    free(group_ptr);
-    group_ptr = NULL;
-}
-
-AntennaGroupCollection *create_antenna_group_collection() {
-    AntennaGroupCollection *groups = (AntennaGroupCollection *) malloc(sizeof(AntennaGroupCollection));
-    groups->items = NULL;
-    groups->count = 0;
-    return groups;
-}
-
-void free_antenna_group_collection(AntennaGroupCollection **groups) {
-    if (*groups == NULL) {
-        return;
-    }
-    if ((*groups)->items != NULL) {
-        for (size_t i = 0; i < (*groups)->count; i++) {
-            free_antenna_group((*groups)->items[i]);
-        }
-        free((*groups)->items);
-    }
-    free(*groups);
-    *groups = NULL;
-}
-
-
-int compare(const void *left, const void *right) {
-    const AntennaGroup *left_ag = (AntennaGroup *) left;
-    const AntennaGroup *right_ag = (AntennaGroup *) right;
-    return COMPARE(left_ag->frequency, right_ag->frequency);
-}
-
-void add_antenna_position(AntennaGroup *group, const Point position) {
-    if (group == NULL) {
-        printf("groups is null\n");
-        exit(1);
-    }
-
-    const size_t new_size = (group->positions_size + 1) * sizeof(Point);
-    Point *new_positions = (Point *) realloc(group->positions, new_size);
-    if (new_positions == NULL) {
-        printf("Error realloc\n");
-        exit(1);
-    }
-    group->positions = new_positions;
-    group->positions[group->positions_size] = position;
-    group->positions_size++;
-}
-
-void add_antenna_group(AntennaGroupCollection *groups, const char frequency, const Point position) {
-    const size_t new_count = groups->count + 1;
-
-    AntennaGroup **new_groups = realloc(groups->items, new_count * sizeof(AntennaGroup *));
-    if (new_groups == NULL) {
-        printf("Error realloc\n");
-        exit(1);
-    }
-
-    AntennaGroup *new_group = create_antenna_group(frequency);
-    add_antenna_position(new_group, position);
-    new_groups[groups->count] = new_group;
-
-    groups->items = new_groups;
-    groups->count++;
-}
-
-void add_antenna(AntennaGroupCollection *groups, const char frequency, const Point position) {
-    if (groups == NULL) {
-        printf("groups is null\n");
-        exit(1);
-    }
-
-    if (groups->items == NULL) {
-        add_antenna_group(groups, frequency, position);
-        return;
-    }
-
-    for (size_t i = 0; i < groups->count; i++) {
-        AntennaGroup *current_group = groups->items[i];
-        if (current_group->frequency == frequency) {
-            add_antenna_position(current_group, position);
-            return;
-        }
-    }
-
-    add_antenna_group(groups, frequency, position);
-}
-
 static void process_file_day07(FILE *file, void *data_ptr) {
     Day08Data *data = (Day08Data *) data_ptr;
 
     size_t columns = 0;
     size_t lines = 0;
-    const int max_buffer_size = 51;
+    const int max_buffer_size = 100;
     char buffer[max_buffer_size];
     memset(buffer, 0, max_buffer_size);
 
@@ -165,15 +50,50 @@ static void process_file_day07(FILE *file, void *data_ptr) {
     }
 }
 
+void write_antinodes(Day08Data *data, MatrixMap **antinodes_map) {
+    *antinodes_map = create_matrix_map(data->map->size.lines, data->map->size.columns);
+    set_matrix_map(*antinodes_map, EMPTY_SPACE);
+
+    // loop through each group
+    for (size_t g = 0; g < data->group_collection->count; g++) {
+        AntennaGroup current_group = *data->group_collection->items[g];
+
+        // loop through each position
+        for (size_t p = 0; p < current_group.positions_size; p++) {
+            Point current_point = current_group.positions[p];
+
+            // compare with each next position to search for antinodes
+            for (size_t p_next = p + 1; p_next < current_group.positions_size; p_next++) {
+                Point next_point = current_group.positions[p_next];
+
+                const PointCouple couple = {current_point, next_point};
+
+                write_antinodes_to_map(&couple, *antinodes_map);
+            }
+        }
+    }
+}
+
 void set_day08_answer(Answer2Parts *answer) {
     Day08Data data;
-    read_file("../day_08/day08_test.txt", &data, process_file_day07);
+    // read_file("../day_08/day08_test.txt", &data, process_file_day07);
+    read_file("../day_08/day08.txt", &data, process_file_day07);
 
-    // print_matrix_map(data.map);
+    MatrixMap *antinodes_map = NULL;
+    write_antinodes(&data, &antinodes_map);
+    // print_matrix_map(antinodes_map);
 
-    answer->part_1 = 0;
+    unsigned long antinodes_count = 0;
+    for (size_t y = 0; y < antinodes_map->size.lines; y++) {
+        for (size_t x = 0; x < antinodes_map->size.columns; x++) {
+            antinodes_count += antinodes_map->values[y][x] == ANTI_NODE;
+        }
+    }
+
+    answer->part_1 = antinodes_count; // 381
     answer->part_2 = 0;
 
+    free_matrix_map(&antinodes_map);
     free_antenna_group_collection(&data.group_collection);
     free_matrix_map(&data.map);
 }

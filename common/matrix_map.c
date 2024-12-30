@@ -89,3 +89,9 @@ MatrixMap *clone_matrix_map(const MatrixMap *matrix_map) {
     copy_matrix_map(matrix_map, copy);
     return copy;
 }
+
+void set_matrix_map(MatrixMap *map, const char character) {
+    for (int y = 0; y < map->size.lines; y++) {
+        memset(map->values[y], character, map->size.columns);
+    }
+}

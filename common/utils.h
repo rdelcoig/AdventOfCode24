@@ -16,6 +16,8 @@ typedef struct {
 
 int reallocate_int_array(int **array_ptr, size_t new_count);
 
+void reallocate_str_array(char ***array_ptr, const size_t new_count);
+
 void read_file(const char *path, void *data, void (*process_file_ptr)(FILE *, void *));
 
 #endif //UTILS_H

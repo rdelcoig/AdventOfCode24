@@ -27,6 +27,7 @@ add_executable(AdventOfCode24
         day_06/day06.c
         day_07/day07_calibration.c
         day_07/day07.c
+        day_08/day08_antenna_group.c
         day_08/day08.c
 )
 
