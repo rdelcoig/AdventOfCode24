@@ -8,6 +8,8 @@
 
 #include "point.h"
 
+#include "utils.h"
+
 void print_point(const Point *point) {
     printf("(%zu, %zu)", point->x, point->y);
 }
@@ -70,11 +72,10 @@ int reallocate_point_array(Point **array_ptr, const size_t new_count) {
 
     Point *new_array = (Point *) realloc(*array_ptr, new_size);
     if (new_array == NULL) {
-        printf("Error: not enough memory\n");
         if (*array_ptr != NULL) {
             free(*array_ptr);
         }
-        exit(1);
+        die_err("realloc failed");
     }
     *array_ptr = new_array;
     return 1;

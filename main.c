@@ -1,5 +1,6 @@
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include "common/utils.h"
@@ -54,9 +55,9 @@ int main(void) {
 
         const Answer2Parts control = control_answers[i];
         if (answer.part_1 != control.part_1 || answer.part_2 != control.part_2) {
-            printf("TEST KO ! {%llu, %llu}\n", control.part_1, control.part_2);
+            fprintf(stderr, "TEST KO ! {%llu, %llu}\n", control.part_1, control.part_2);
         }
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }

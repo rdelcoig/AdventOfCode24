@@ -8,10 +8,11 @@
 
 #include "matrix_map.h"
 
+#include "utils.h"
+
 char *get_value_ptr_in_matrix_map(const MatrixMap *matrix_map, const Point *point) {
     if (is_out_of_map(matrix_map, point)) {
-        printf("Out of bounds\n");
-        exit(1);
+        die_err("Out of bounds");
     }
     return &matrix_map->values[point->y][point->x];
 }
@@ -76,11 +77,11 @@ int is_out_of_bounds(const TableSize *size, const Point *point) {
 
 void copy_matrix_map(const MatrixMap *source_map, MatrixMap *dest_map) {
     if (source_map == NULL || dest_map == NULL) {
-        printf("Invalid matrix map\n");
-        exit(1);
-    }
-    for (int y = 0; y < source_map->size.lines; y++) {
-        set_line_in_matrix_map(dest_map, y, source_map->values[y]);
+        die_err("Invalid matrix map");
+    } else {
+        for (int y = 0; y < source_map->size.lines; y++) {
+            set_line_in_matrix_map(dest_map, y, source_map->values[y]);
+        }
     }
 }
 
