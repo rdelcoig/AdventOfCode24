@@ -29,6 +29,7 @@ add_executable(AdventOfCode24
         day_07/day07.c
         day_08/day08_antenna_group.c
         day_08/day08.c
+        day_09/day09.c
 )
 
 find_library(MATH_LIBRARY m REQUIRED)

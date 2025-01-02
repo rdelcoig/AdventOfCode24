@@ -12,9 +12,10 @@
 #include "day_06/day06.h"
 #include "day_07/day07.h"
 #include "day_08/day08.h"
+#include "day_09/day09.h"
 
 int main(void) {
-    const int days = 8;
+    const int days = 9;
 
     const Answer2Parts control_answers[] = {
         {1879048, 21024792},
@@ -24,7 +25,8 @@ int main(void) {
         {5268, 5799},
         {5080, 1919},
         {2437272016585, 162987117690649},
-        {381, 1184}
+        {381, 1184},
+        {0, 0}
     };
 
     void (*calls[days])(Answer2Parts *);
@@ -32,14 +34,15 @@ int main(void) {
         calls[i] = NULL;
     }
 
-    calls[0] = set_day01_answer;
-    calls[1] = set_day02_answer;
-    calls[2] = set_day03_answer;
-    calls[3] = set_day04_answer;
-    calls[4] = set_day05_answer;
-    calls[5] = set_day06_answer;
-    calls[6] = set_day07_answer;
-    calls[7] = set_day08_answer;
+    // calls[0] = set_day01_answer;
+    // calls[1] = set_day02_answer;
+    // calls[2] = set_day03_answer;
+    // calls[3] = set_day04_answer;
+    // calls[4] = set_day05_answer;
+    // calls[5] = set_day06_answer;
+    // calls[6] = set_day07_answer;
+    // calls[7] = set_day08_answer;
+    calls[8] = set_day09_answer;
 
     for (size_t i = 0; i < days; i++) {
         if (calls[i] == NULL) {
